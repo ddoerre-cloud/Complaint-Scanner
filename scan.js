@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return res.status(500).json({
-      error: { type: 'config_error', message: 'ANTHROPIC_API_KEY is not set. Add it in your Vercel project environment variables.' }
+      error: { type: 'config_error', message: 'ANTHROPIC_API_KEY not configured on the server.' }
     });
   }
 
@@ -25,12 +25,9 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify(req.body)
     });
-
     const data = await upstream.json();
     return res.status(upstream.status).json(data);
   } catch (err) {
-    return res.status(500).json({
-      error: { type: 'proxy_error', message: err.message }
-    });
+    return res.status(500).json({ error: { type: 'proxy_error', message: err.message } });
   }
 }
