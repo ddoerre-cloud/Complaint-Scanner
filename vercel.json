@@ -1,5 +1,8 @@
 {
   "version": 2,
+  "functions": {
+    "api/scan.js": { "maxDuration": 120 }
+  },
   "routes": [
     { "src": "/api/scan", "dest": "/api/scan.js" },
     { "src": "/(.*)", "dest": "/index.html" }
