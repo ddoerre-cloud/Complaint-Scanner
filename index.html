@@ -113,11 +113,37 @@
   .history-chip:hover { border-color: var(--accent); color: var(--accent); }
   footer { text-align:center; margin-top:3rem; color:#333; font-size:0.68rem; line-height:1.8; }
   footer em { color:var(--slingr); font-style:normal; }
-  footer a { color:var(--muted); text-decoration:none; }
   @media (max-width: 600px) {
     .search-input { font-size: 0.78rem; }
     .complaint-item { grid-template-columns: 58px 1fr; }
   }
+  @media print {
+    body { background: #fff !important; color: #000 !important; padding: 1rem !important; }
+    .header h1 { -webkit-text-fill-color: #cc3300 !important; color: #cc3300 !important; }
+    .header p, .search-wrap, .sources-wrap, .legend, .status-wrap, .active-query,
+    .skeletons, .history-wrap, footer, .scan-btn, .search-clear, .pdf-btn-wrap { display: none !important; }
+    .results-container { display: block !important; }
+    .panel-inner { background: #fff !important; border: 1px solid #ddd !important; }
+    .stat-box { background: #f5f5f5 !important; border: 1px solid #ddd !important; }
+    .stat-value { color: #000 !important; }
+    .complaint-item { background: #fafafa !important; border: 1px solid #ddd !important; page-break-inside: avoid; }
+    .rank-num { color: #cc3300 !important; }
+    .rank-count strong { color: #333 !important; }
+    .rank-count { color: #666 !important; }
+    .bar { background: #cc3300 !important; }
+    .cat-label { color: #000 !important; }
+    .complaint-text { color: #333 !important; }
+    .slingr-block { background: #e8f8f6 !important; border: 1px solid #00a08a !important; border-left: 3px solid #00a08a !important; color: #005a4e !important; }
+    .slingr-icon, .slingr-label { color: #007a68 !important; }
+    .summary-box { background: #f5f5f5 !important; border: 1px solid #ddd !important; border-top: 3px solid #cc3300 !important; color: #333 !important; }
+    .summary-label { color: #666 !important; }
+    .pdf-print-header { display: block !important; }
+  }
+  .pdf-print-header { display: none; font-size: 0.75rem; color: #666; margin-bottom: 1rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+  .pdf-btn-wrap { max-width: 900px; margin: 0 auto 1rem; display: none; justify-content: flex-end; }
+  .pdf-btn-wrap.visible { display: flex; }
+  .pdf-btn { background: transparent; border: 1px solid #333; color: #888; padding: 0.45rem 1.1rem; font-family: 'DM Mono', monospace; font-size: 0.72rem; cursor: pointer; border-radius: 3px; display: flex; align-items: center; gap: 0.4rem; transition: all 0.18s; letter-spacing: 0.04em; }
+  .pdf-btn:hover { border-color: var(--slingr); color: var(--slingr); }
 </style>
 </head>
 <body>
@@ -125,7 +151,7 @@
 <div class="header">
   <div class="header-icon">📍</div>
   <h1>Pain-Point Finder</h1>
-  <p>Search any topic · Surface real complaints ranked by volume · Find the Slingr angle<br>
+  <p>Search any topic · Top 10 complaints · Last 6 months · Find the Slingr angle<br>
   Sources: Reddit · Hacker News · G2 · Capterra · Stack Overflow · LinkedIn</p>
 </div>
 
@@ -184,6 +210,9 @@
 
 <div class="error-box" id="errorBox"></div>
 
+<div class="pdf-btn-wrap" id="pdfBtnWrap">
+  <button class="pdf-btn" onclick="downloadPDF()">⬇ Download PDF</button>
+</div>
 <div class="results-container" id="results">
   <div id="mainPanel"></div>
 </div>
@@ -208,15 +237,17 @@ async function startScan() {
   const sources=getActiveSources();
   if(sources.length===0){alert('Please select at least one source.');return;}
   const btn=document.getElementById('scanBtn'),statusBar=document.getElementById('statusBar'),statusText=document.getElementById('statusText'),skeletons=document.getElementById('skeletons'),results=document.getElementById('results'),errorBox=document.getElementById('errorBox'),mainPanel=document.getElementById('mainPanel');
-  btn.disabled=true;btn.textContent='Searching...';statusBar.classList.add('active');skeletons.classList.add('visible');results.classList.remove('visible');mainPanel.innerHTML='';errorBox.classList.remove('visible');
+  btn.disabled=true;btn.textContent='Searching...';statusBar.classList.add('active');skeletons.classList.add('visible');results.classList.remove('visible');document.getElementById('pdfBtnWrap').classList.remove('visible');mainPanel.innerHTML='';errorBox.classList.remove('visible');
   showActiveQuery(query,sources);addToHistory(query);
   const sourcesDesc=buildSourcesDescription(sources);
   const steps=[`Searching ${sources.slice(0,2).map(s=>SOURCE_META[s]?.label||s).join(' + ')}...`,sources.length>2?`Scanning ${sources.slice(2).map(s=>SOURCE_META[s]?.label||s).join(' + ')}...`:'Cross-referencing sources...','Ranking by complaint volume...','Identifying pain point patterns...','Writing Slingr angles...','Finalising results...'];
   let si=0;
   const tick=setInterval(()=>{if(si<steps.length)statusText.textContent=steps[si++];},5000);
-  const systemPrompt=`You are a competitive-intelligence analyst. Search ${sourcesDesc} for real complaints about the user's topic. Return TOP 20 pain points ranked by volume. JSON only - no markdown, no backticks. Schema: {"complaints":[{"category":"3-6 word title","complaint":"2-3 sentence description","tag":"pricing|tech|support|ux|hype|workflow|data|cost|other","complaint_count":1200,"sources":["reddit","g2"],"slingr_counter":"1-2 sentences how Slingr addresses this. Slingr: custom AI-powered solutions, open framework, AI agents as workforce extensions, full code/IP ownership, no vendor lock-in, HIPAA/SOC2 compliant, enterprise automation."}],"total_mentions":15000,"summary":"3-4 sentence overview"}`;
+  const sixMonthsAgo=new Date();sixMonthsAgo.setMonth(sixMonthsAgo.getMonth()-6);
+  const dateFilter=sixMonthsAgo.toISOString().split('T')[0];
+  const systemPrompt=`You are a competitive-intelligence analyst. Search ${sourcesDesc} for real complaints about the user's topic posted after ${dateFilter} (last 6 months only). Return TOP 10 pain points ranked by volume. JSON only - no markdown, no backticks. Schema: {"complaints":[{"category":"3-6 word title","complaint":"2-3 sentence description","tag":"pricing|tech|support|ux|hype|workflow|data|cost|other","complaint_count":1200,"sources":["reddit","g2"],"slingr_counter":"1-2 sentences how Slingr addresses this. Slingr: custom AI-powered solutions, open framework, AI agents as workforce extensions, full code/IP ownership, no vendor lock-in, HIPAA/SOC2 compliant, enterprise automation."}],"total_mentions":15000,"summary":"3-4 sentence overview"}`;
   try {
-    const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:10000,tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],system:systemPrompt,messages:[{role:'user',content:`Research this topic and find the top 20 pain points: "${query}"\n\nSources to search: ${sourcesDesc}\n\nReturn valid JSON only.`}]})});
+    const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:10000,tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],system:systemPrompt,messages:[{role:'user',content:`Find top 10 pain points (last 6 months only, after ${dateFilter}): "${query}". Sources: ${sourcesDesc}. JSON only.`}]})});
     clearInterval(tick);statusText.textContent='Processing results...';
     if(!res.ok){const t=await res.text();throw new Error('HTTP '+res.status+': '+t.slice(0,300));}
     const data=await res.json();
@@ -230,6 +261,7 @@ async function startScan() {
     const parsed=JSON.parse(m[0]);
     renderPanel(mainPanel,parsed.complaints||[],parsed.total_mentions,parsed.summary,query,sources);
     results.classList.add('visible');
+    document.getElementById('pdfBtnWrap').classList.add('visible');
   } catch(err) {
     clearInterval(tick);skeletons.classList.remove('visible');
     errorBox.textContent='Error: '+err.message;errorBox.classList.add('visible');
@@ -237,12 +269,12 @@ async function startScan() {
   statusBar.classList.remove('active');btn.disabled=false;btn.textContent='▶ Find Pain Points';
 }
 function renderPanel(panelEl,list,totalMentions,summary,query,sources) {
-  const top20=list.slice(0,20),maxCnt=Math.max(...top20.map(c=>c.complaint_count||0),1);
-  const total=totalMentions||top20.reduce((s,c)=>s+(c.complaint_count||0),0);
+  const top10=list.slice(0,10),maxCnt=Math.max(...top10.map(c=>c.complaint_count||0),1);
+  const total=totalMentions||top10.reduce((s,c)=>s+(c.complaint_count||0),0);
   const sourceCounts={};sources.forEach(s=>{sourceCounts[s]=0;});
-  top20.forEach(c=>{(c.sources||[]).forEach(s=>{if(sourceCounts[s]!==undefined)sourceCounts[s]++;});});
-  const statsBoxes=['<div class="stat-box"><div class="stat-value">'+top20.length+'</div><div class="stat-label">Issues</div></div>','<div class="stat-box"><div class="stat-value">'+total.toLocaleString()+'</div><div class="stat-label">Mentions</div></div>',...sources.map(s=>'<div class="stat-box"><div class="stat-value">'+(sourceCounts[s]||0)+'</div><div class="stat-label">'+(SOURCE_META[s]?.label||s)+'</div></div>')].join('');
-  const cards=top20.map((c,i)=>{
+  top10.forEach(c=>{(c.sources||[]).forEach(s=>{if(sourceCounts[s]!==undefined)sourceCounts[s]++;});});
+  const statsBoxes=['<div class="stat-box"><div class="stat-value">'+top10.length+'</div><div class="stat-label">Issues</div></div>','<div class="stat-box"><div class="stat-value">'+total.toLocaleString()+'</div><div class="stat-label">Mentions</div></div>',...sources.map(s=>'<div class="stat-box"><div class="stat-value">'+(sourceCounts[s]||0)+'</div><div class="stat-label">'+(SOURCE_META[s]?.label||s)+'</div></div>')].join('');
+  const cards=top10.map((c,i)=>{
     const pct=Math.round(((c.complaint_count||0)/maxCnt)*100);
     const srcs=c.sources||[];
     const badges=srcs.map(s=>{const meta=SOURCE_META[s];if(!meta)return'';return`<span class="src-badge ${meta.cls}">${meta.label}</span>`;}).join('');
@@ -251,8 +283,9 @@ function renderPanel(panelEl,list,totalMentions,summary,query,sources) {
     return`<div class="complaint-item"><div class="rank-col"><div class="rank-num">#${i+1}</div><div class="rank-count"><strong>${(c.complaint_count||0).toLocaleString()}</strong>mentions</div><div class="bar-wrap"><div class="bar" style="width:${pct}%"></div></div></div><div class="complaint-body"><div class="title-row"><span class="cat-label">${c.category}</span><span class="tag tag-${tagKey}">${tagLabel}</span></div><div class="source-badges">${badges}</div><div class="complaint-text">${c.complaint}</div><div class="slingr-block"><span class="slingr-icon">⚡</span><span><span class="slingr-label">Slingr Angle:</span> ${c.slingr_counter}</span></div></div></div>`;
   }).join('');
   const summaryHtml=summary?`<div class="summary-section"><div class="summary-label">Intelligence Summary</div><div class="summary-box">${summary}</div></div>`:'';
-  panelEl.innerHTML=`<div class="panel-inner"><div class="stats-row">${statsBoxes}</div>${cards}${summaryHtml}</div>`;
+  panelEl.innerHTML=`<div class="panel-inner"><div class="pdf-print-header">Pain-Point Finder · Query: ${query} · Sources: ${sources.map(s=>SOURCE_META[s]?.label||s).join(', ')} · Last 6 months · Generated ${new Date().toLocaleDateString()}</div><div class="stats-row">${statsBoxes}</div>${cards}${summaryHtml}</div>`;
 }
+function downloadPDF() { window.print(); }
 renderHistory();
 </script>
 </body>
