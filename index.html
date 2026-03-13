@@ -33,12 +33,12 @@
   .source-toggle { display: flex; align-items: center; gap: 0.45rem; padding: 0.4rem 0.85rem; border-radius: 999px; font-size: 0.71rem; font-weight: 500; border: 1px solid; cursor: pointer; user-select: none; transition: all 0.18s; font-family: 'DM Mono', monospace; }
   .source-toggle input { display: none; }
   .source-toggle .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; transition: opacity 0.2s; }
-  .src-reddit   { background:#1a0b00; border-color:#5c2000; color:#ff7a4a; }
-  .src-hn       { background:#1a1000; border-color:#5c3a00; color:#ffb04a; }
-  .src-g2       { background:#0a1500; border-color:#2a4500; color:#8fff6a; }
-  .src-capterra { background:#00102a; border-color:#003070; color:#60b8ff; }
-  .src-so       { background:#1a0e00; border-color:#5c3500; color:#f8a94a; }
-  .src-linkedin { background:#001220; border-color:#003660; color:#5ab4e8; }
+  .src-reddit  { background:#1a0b00; border-color:#5c2000; color:#ff7a4a; }
+  .src-hn      { background:#1a1000; border-color:#5c3a00; color:#ffb04a; }
+  .src-g2      { background:#0a1500; border-color:#2a4500; color:#8fff6a; }
+  .src-capterra{ background:#00102a; border-color:#003070; color:#60b8ff; }
+  .src-so      { background:#1a0e00; border-color:#5c3500; color:#f8a94a; }
+  .src-linkedin{ background:#001220; border-color:#003660; color:#5ab4e8; }
   .source-toggle.unchecked { opacity: 0.38; filter: grayscale(0.6); }
   .scan-btn { display: block; margin: 0 auto 2.2rem; background: linear-gradient(135deg, #ff4500, #ff7034); color: white; border: none; padding: 1rem 3.5rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: 0.06em; cursor: pointer; border-radius: 4px; text-transform: uppercase; transition: all 0.2s; box-shadow: 0 0 28px rgba(255,69,0,0.22); }
   .scan-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 45px rgba(255,69,0,0.42); }
@@ -52,10 +52,11 @@
   .pulse { display: inline-block; width: 7px; height: 7px; background: var(--green); border-radius: 50%; margin-right: 8px; animation: blink 1s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
   .active-query { max-width: 900px; margin: 0 auto 1rem; display: none; }
-  .active-query.visible { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  .active-query.visible { display: flex; align-items: center; gap: 0.6rem; }
   .active-query-label { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
   .active-query-text { font-size: 0.78rem; color: var(--accent); font-family: 'DM Mono', monospace; background: #1a0800; border: 1px solid #3a1800; padding: 0.3rem 0.7rem; border-radius: 3px; }
   .active-sources { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+  .active-src-chip { font-size: 0.6rem; padding: 0.15rem 0.4rem; border-radius: 2px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
   .results-container { display: none; max-width: 900px; margin: 0 auto; }
   .results-container.visible { display: block; }
   .panel-inner { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem 1.4rem; }
@@ -86,12 +87,12 @@
   .tag-other    { background:#151515; color:#999; border:1px solid #333; }
   .source-badges { display:flex; gap:0.3rem; flex-wrap:wrap; margin-bottom:0.45rem; }
   .src-badge { font-size:0.58rem; padding:0.12rem 0.4rem; border-radius:2px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; }
-  .badge-reddit        { background:#1a0b00; color:#ff7a4a; border:1px solid #5c2000; }
-  .badge-hackernews    { background:#1a1000; color:#ffb04a; border:1px solid #5c3a00; }
-  .badge-g2            { background:#0a1500; color:#8fff6a; border:1px solid #2a4500; }
-  .badge-capterra      { background:#00102a; color:#60b8ff; border:1px solid #003070; }
+  .badge-reddit   { background:#1a0b00; color:#ff7a4a; border:1px solid #5c2000; }
+  .badge-hackernews { background:#1a1000; color:#ffb04a; border:1px solid #5c3a00; }
+  .badge-g2       { background:#0a1500; color:#8fff6a; border:1px solid #2a4500; }
+  .badge-capterra { background:#00102a; color:#60b8ff; border:1px solid #003070; }
   .badge-stackoverflow { background:#1a0e00; color:#f8a94a; border:1px solid #5c3500; }
-  .badge-linkedin      { background:#001220; color:#5ab4e8; border:1px solid #003660; }
+  .badge-linkedin { background:#001220; color:#5ab4e8; border:1px solid #003660; }
   .complaint-text { font-size:0.81rem; line-height:1.65; color:#b2b2b2; margin-bottom:0.7rem; }
   .slingr-block { background: linear-gradient(135deg, #031a17, #04201c); border: 1px solid var(--slingr-border); border-left: 3px solid var(--slingr); border-radius: 4px; padding: 0.7rem 1rem; font-size: 0.77rem; line-height: 1.62; color: #9ee8de; display: flex; gap: 0.5rem; align-items: flex-start; }
   .slingr-icon { color:var(--slingr); flex-shrink:0; margin-top:0.06rem; }
@@ -120,12 +121,14 @@
 </style>
 </head>
 <body>
+
 <div class="header">
   <div class="header-icon">📍</div>
   <h1>Pain-Point Finder</h1>
   <p>Search any topic · Surface real complaints ranked by volume · Find the Slingr angle<br>
   Sources: Reddit · Hacker News · G2 · Capterra · Stack Overflow · LinkedIn</p>
 </div>
+
 <div class="search-wrap">
   <label class="search-label" for="searchInput">What pain points do you want to find?</label>
   <div class="search-input-row">
@@ -134,10 +137,12 @@
     <button class="scan-btn" id="scanBtn" onclick="startScan()" style="margin:0;border-radius:0 4px 4px 0;padding:0 2rem;">&#9654; Find Pain Points</button>
   </div>
 </div>
+
 <div class="history-wrap" id="historyWrap" style="display:none;">
   <span class="history-label">Recent searches:</span>
   <div class="history-chips" id="historyChips"></div>
 </div>
+
 <div class="sources-wrap">
   <span class="sources-label">Sources to search</span>
   <div class="sources-grid">
@@ -149,6 +154,7 @@
     <label class="source-toggle src-linkedin" id="toggle-linkedin"><input type="checkbox" value="linkedin" checked onchange="toggleSource(this)"><div class="dot" style="background:#5ab4e8"></div>LinkedIn</label>
   </div>
 </div>
+
 <div class="legend">
   <div class="legend-item"><div class="legend-dot" style="background:#ff7a7a"></div>Pricing / Cost</div>
   <div class="legend-item"><div class="legend-dot" style="background:#6dd3ff"></div>Technical</div>
@@ -159,24 +165,31 @@
   <div class="legend-item"><div class="legend-dot" style="background:#ffd98a"></div>Data</div>
   <div class="legend-item"><div class="legend-dot" style="background:#00c2a8"></div>Slingr Angle</div>
 </div>
+
 <div class="status-wrap">
   <div class="status-bar" id="statusBar"><span class="pulse"></span><span id="statusText">Initializing...</span></div>
 </div>
+
 <div class="active-query" id="activeQuery">
   <span class="active-query-label">Searching:</span>
   <span class="active-query-text" id="activeQueryText"></span>
   <div class="active-sources" id="activeSources"></div>
 </div>
+
 <div class="skeletons" id="skeletons">
   <div class="loading-skeleton"></div><div class="loading-skeleton"></div>
   <div class="loading-skeleton"></div><div class="loading-skeleton"></div>
   <div class="loading-skeleton"></div><div class="loading-skeleton"></div>
 </div>
+
 <div class="error-box" id="errorBox"></div>
+
 <div class="results-container" id="results">
   <div id="mainPanel"></div>
 </div>
+
 <footer>Powered by Claude + Web Search &nbsp;·&nbsp; Sources: Reddit · Hacker News · G2 · Capterra · Stack Overflow · LinkedIn &nbsp;·&nbsp; <em>Slingr</em> angles generated by AI</footer>
+
 <script>
 const TAG_LABELS = { pricing:'PRICING', tech:'TECHNICAL', support:'SUPPORT', ux:'UX/UI', hype:'OVERHYPE', workflow:'WORKFLOW', data:'DATA', cost:'COST', other:'OTHER' };
 const SOURCE_META = { reddit:{label:'Reddit',cls:'badge-reddit'}, hackernews:{label:'Hacker News',cls:'badge-hackernews'}, g2:{label:'G2',cls:'badge-g2'}, capterra:{label:'Capterra',cls:'badge-capterra'}, stackoverflow:{label:'Stack Overflow',cls:'badge-stackoverflow'}, linkedin:{label:'LinkedIn',cls:'badge-linkedin'} };
@@ -187,8 +200,8 @@ function clearSearch() { document.getElementById('searchInput').value=''; docume
 function getActiveSources() { return Array.from(document.querySelectorAll('.source-toggle input:checked')).map(i=>i.value); }
 function buildSourcesDescription(sources) { const names={reddit:'Reddit (relevant subreddits)',hackernews:'Hacker News (news.ycombinator.com)',g2:'G2 (g2.com software reviews)',capterra:'Capterra (capterra.com reviews)',stackoverflow:'Stack Overflow (stackoverflow.com)',linkedin:'LinkedIn (public posts and comments)'}; return sources.map(s=>names[s]||s).join(', '); }
 function addToHistory(query) { searchHistory=[query,...searchHistory.filter(h=>h!==query)].slice(0,6); localStorage.setItem('ppf_history',JSON.stringify(searchHistory)); renderHistory(); }
-function renderHistory() { const wrap=document.getElementById('historyWrap'),chips=document.getElementById('historyChips'); if(searchHistory.length===0){wrap.style.display='none';return;} wrap.style.display='block'; chips.innerHTML=searchHistory.map(h=>`<div class="history-chip" onclick="document.getElementById('searchInput').value='${h.replace(/'/g,"\\'")}'">  ${h}</div>`).join(''); }
-function showActiveQuery(query,sources) { const aq=document.getElementById('activeQuery'); document.getElementById('activeQueryText').textContent=query; const asc=document.getElementById('activeSources'); asc.innerHTML=sources.map(s=>`<span style="${SOURCE_CHIP_COLORS[s]||''};font-size:0.6rem;padding:0.15rem 0.4rem;border-radius:2px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;">${SOURCE_META[s]?.label||s}</span>`).join(''); aq.classList.add('visible'); }
+function renderHistory() { const wrap=document.getElementById('historyWrap'),chips=document.getElementById('historyChips'); if(searchHistory.length===0){wrap.style.display='none';return;} wrap.style.display='block'; chips.innerHTML=searchHistory.map(h=>`<div class="history-chip" onclick="document.getElementById('searchInput').value='${h.replace(/'/g,"\\'")}'"> ${h}</div>`).join(''); }
+function showActiveQuery(query,sources) { const aq=document.getElementById('activeQuery'); document.getElementById('activeQueryText').textContent=query; const asc=document.getElementById('activeSources'); asc.innerHTML=sources.map(s=>`<span class="active-src-chip" style="${SOURCE_CHIP_COLORS[s]||''};font-size:0.6rem;padding:0.15rem 0.4rem;border-radius:2px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;">${SOURCE_META[s]?.label||s}</span>`).join(''); aq.classList.add('visible'); }
 async function startScan() {
   const query=document.getElementById('searchInput').value.trim();
   if(!query){document.getElementById('searchInput').focus();document.getElementById('searchInput').style.borderColor='var(--accent)';setTimeout(()=>document.getElementById('searchInput').style.borderColor='',1200);return;}
@@ -203,7 +216,7 @@ async function startScan() {
   const tick=setInterval(()=>{if(si<steps.length)statusText.textContent=steps[si++];},5000);
   const systemPrompt=`You are a competitive-intelligence analyst. Search ${sourcesDesc} for real complaints about the user's topic. Return TOP 20 pain points ranked by volume. JSON only - no markdown, no backticks. Schema: {"complaints":[{"category":"3-6 word title","complaint":"2-3 sentence description","tag":"pricing|tech|support|ux|hype|workflow|data|cost|other","complaint_count":1200,"sources":["reddit","g2"],"slingr_counter":"1-2 sentences how Slingr addresses this. Slingr: custom AI-powered solutions, open framework, AI agents as workforce extensions, full code/IP ownership, no vendor lock-in, HIPAA/SOC2 compliant, enterprise automation."}],"total_mentions":15000,"summary":"3-4 sentence overview"}`;
   try {
-    const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:10000,tools:[{type:'web_search_20250305',name:'web_search'}],system:systemPrompt,messages:[{role:'user',content:`Find top 20 pain points for: "${query}". Sources: ${sourcesDesc}. JSON only.`}]})});
+    const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:10000,tools:[{type:'web_search_20250305',name:'web_search',max_uses:3}],system:systemPrompt,messages:[{role:'user',content:`Research this topic and find the top 20 pain points: "${query}"\n\nSources to search: ${sourcesDesc}\n\nReturn valid JSON only.`}]})});
     clearInterval(tick);statusText.textContent='Processing results...';
     if(!res.ok){const t=await res.text();throw new Error('HTTP '+res.status+': '+t.slice(0,300));}
     const data=await res.json();
