@@ -30,7 +30,7 @@ export default async function handler(req, res) {
     if (!upstream.ok) return res.status(upstream.status).json(data);
     const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
     return res.status(200).json({ text });
-  } catch (err) {
+  } catch (err) { 
     return res.status(500).json({ error: err.message });
   }
 } 
