@@ -35,6 +35,6 @@ export default async function handler(req, res) {
     const text = data?.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '';
     return res.status(200).json({ text });
   } catch (err) {
-    return res.status(500).json({ error: err.message }); 
+    return res.status(500).json({ error: err.message });  
   }
 }
