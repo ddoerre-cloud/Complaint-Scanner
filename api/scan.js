@@ -23,10 +23,10 @@ export default async function handler(req, res) {
         'anthropic-beta': 'web-search-2025-03-05'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 12000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        system: 'You are a competitive intelligence analyst with web search capability. The user will give you a product to research and specific sources to search.',
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4000,
+        tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }],
+        system: 'You are a competitive intelligence analyst with web search capability. The user will give you a topic to research. Be concise in your JSON output.',
         messages: [{ role: 'user', content: prompt }]
       })
     });
