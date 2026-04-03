@@ -213,5 +213,221 @@
 
 <div class="modal-overlay" id="campaignModal">
   <div class="modal">
-    <div class="modal-h
+    <div class="modal-header">
+      <div class="modal-title">&#128640; Export to Campaign</div>
+      <button class="modal-close" onclick="closeCampaignModal()">&#x2715;</button>
+    </div>
+    <div class="modal-grid">
+      <div class="modal-section">
+        <div class="modal-section-label">Campaign Name</div>
+        <input type="text" class="modal-field" id="campaignName">
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-label">Target Vertical</div>
+        <input type="text" class="modal-field" id="targetVertical">
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Top Pain Point (Email Hook)</div>
+      <textarea class="modal-field" id="painPointHook" rows="2"></textarea>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Prospect Search Query</div>
+      <input type="text" class="modal-field" id="prospectQuery">
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Send From (Instantly Sender Email)</div>
+      <input type="text" class="modal-field" id="senderEmail" placeholder="e.g. dave@slingr.io">
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">5-Email Sequence — Edit before sending</div>
+      <div class="email-block">
+        <div class="email-num">Email 1 — Cold Outreach (Day 1)</div>
+        <textarea class="modal-field" id="email1" rows="5"></textarea>
+      </div>
+      <div class="email-block">
+        <div class="email-num">Email 2 — Follow Up (Day 3)</div>
+        <textarea class="modal-field" id="email2" rows="4"></textarea>
+      </div>
+      <div class="email-block">
+        <div class="email-num">Email 3 — Value Add (Day 7)</div>
+        <textarea class="modal-field" id="email3" rows="4"></textarea>
+      </div>
+      <div class="email-block">
+        <div class="email-num">Email 4 — Social Proof (Day 12)</div>
+        <textarea class="modal-field" id="email4" rows="4"></textarea>
+      </div>
+      <div class="email-block">
+        <div class="email-num">Email 5 — Break Up (Day 18)</div>
+        <textarea class="modal-field" id="email5" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-sm btn-prospects" onclick="findProspects()">&#128269; Review Prospect Query</button>
+      <button class="btn-sm btn-create" id="createCampaignBtn" onclick="createInstantlyCampaign()">&#9889; Create Instantly Campaign</button>
+    </div>
+    <div class="info-box green" id="prospectsResult"></div>
+    <div class="info-box orange" id="campaignResult"></div>
+    <div class="next-steps">
+      <div class="next-steps-label">What happens next</div>
+      <div class="next-step-item"><span class="next-step-num">1</span><span><strong>Review the 5 emails above</strong> — edit any copy before creating the campaign</span></div>
+      <div class="next-step-item"><span class="next-step-num">2</span><span><strong>Enter your sender email</strong> — the inbox this campaign will send from</span></div>
+      <div class="next-step-item"><span class="next-step-num">3</span><span><strong>Click Create Instantly Campaign</strong> — the campaign and all 5 emails get built in Instantly automatically</span></div>
+      <div class="next-step-item"><span class="next-step-num">4</span><span><strong>Upload contacts from Seamless</strong> — export a CSV using the prospect query above and import into the campaign in Instantly</span></div>
+      <div class="next-step-item"><span class="next-step-num">5</span><span><strong>Activate in Instantly</strong> — review one final time then hit Activate to start sending</span></div>
+    </div>
+  </div>
+</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+const TAG_LABELS={pricing:'PRICING',tech:'TECHNICAL',support:'SUPPORT',ux:'UX/UI',hype:'OVERHYPE'};
+const VERTICAL_ICONS={'Healthcare':'&#127973;','Manufacturing':'&#127981;','Insurance':'&#128206;','Financial Services':'&#128200;','Retail':'&#128722;','Technology':'&#128187;','Logistics':'&#128666;','Real Estate':'&#127968;','Education':'&#127979;','Nonprofit':'&#10084;','Professional Services':'&#128084;','Media':'&#127916;','Telecommunications':'&#128222;','Government':'&#127963;','Other':'&#127757;'};
+let lastScanData=null,lastScanTopic='';
+
+document.querySelectorAll('.site-chip').forEach(chip=>{chip.addEventListener('click',()=>{const cb=chip.querySelector('input');cb.checked=!cb.checked;chip.classList.toggle('checked',cb.checked);});});
+function getCheckedSites(){return[...document.querySelectorAll('.site-chip input:checked')].map(cb=>cb.value);}
+function switchTab(which){document.getElementById('panel-primary').classList.toggle('visible',which==='primary');document.getElementById('panel-compare').classList.toggle('visible',which==='compare');document.getElementById('tab1').classList.toggle('active-tab',which==='primary');document.getElementById('tab2').classList.toggle('active-tab',which==='compare');}
+function downloadPDF(){const btn=document.getElementById('pdfBtn');btn.disabled=true;btn.textContent='Generating PDF...';html2pdf().set({margin:0.5,filename:'pain-point-report.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,backgroundColor:'#0b0b0b'},jsPDF:{unit:'in',format:'letter',orientation:'portrait'},pagebreak:{mode:['avoid-all','css','legacy']}}).from(document.getElementById('results')).save().then(()=>{btn.disabled=false;btn.textContent='\u2b07 Download PDF';});}
+
+function exportComplaint(index){openCampaignModal(index);}
+
+function openCampaignModal(index){
+  if(!lastScanData||!lastScanData.complaints||!lastScanData.complaints.length)return;
+  const idx=(index!==undefined)?index:0;
+  const top=lastScanData.complaints[idx];
+  const topVertical=(top.verticals&&top.verticals.length)?top.verticals[0].name:'Enterprise';
+  const topic=lastScanTopic;
+  document.getElementById('campaignName').value=topic+' \u2014 '+topVertical+' Outreach';
+  document.getElementById('targetVertical').value=topVertical;
+  document.getElementById('painPointHook').value=top.complaint;
+  document.getElementById('prospectQuery').value='VP Operations OR IT Director OR CIO '+topVertical+' company using Salesforce';
+  document.getElementById('senderEmail').value='';
+  document.getElementById('email1').value='Subject: Seeing this a lot in '+topVertical+'\n\nHi {{firstName}},\n\nWe\'ve been hearing from a lot of '+topVertical+' teams lately about a common frustration: '+top.category.toLowerCase()+'.\n\n'+top.slingr_counter+'\n\nWorth a quick 15-minute call to show you how we\'ve solved this for similar teams?\n\n\u2014 Dave\nSlingr';
+  document.getElementById('email2').value='Hi {{firstName}},\n\nJust following up \u2014 wanted to share that we recently helped a '+topVertical+' company address '+top.category.toLowerCase()+' by replacing key Salesforce workflows with Slingr.\n\nHappy to send over a quick case study if useful.\n\n\u2014 Dave';
+  document.getElementById('email3').value='Hi {{firstName}},\n\nOne thing that often surprises '+topVertical+' teams when they see Slingr: setup takes days, not months. No consultants, no custom dev required.\n\nContrast that with the average Salesforce implementation which runs 2-3x over budget.\n\nWould a 15-minute demo be worth your time?\n\n\u2014 Dave';
+  document.getElementById('email4').value='Hi {{firstName}},\n\nQuick one \u2014 we recently worked with a '+topVertical+' team dealing with '+top.category.toLowerCase()+'. They replaced their Salesforce workflow with Slingr in under 30 days and cut their software costs significantly.\n\nHappy to make an intro if a peer perspective would help.\n\n\u2014 Dave';
+  document.getElementById('email5').value='Hi {{firstName}},\n\nLast note from me \u2014 if '+top.category.toLowerCase()+' isn\'t on your radar right now, totally understand.\n\nWhen the time is right, we\'ll be here. slingr.io\n\n\u2014 Dave';
+  document.getElementById('campaignModal').classList.add('visible');
+  document.getElementById('prospectsResult').classList.remove('visible');
+  document.getElementById('campaignResult').classList.remove('visible');
+}
+
+function closeCampaignModal(){document.getElementById('campaignModal').classList.remove('visible');}
+
+function findProspects(){
+  const result=document.getElementById('prospectsResult');
+  const query=document.getElementById('prospectQuery').value;
+  if(!query)return;
+  result.innerHTML='<strong>&#128269; Prospect Query Ready</strong><br><br>Query: <em>'+query+'</em><br><br>Use this in Seamless to pull contacts. Suggested titles: VP of Operations, IT Director, CIO, Director of Technology. Filter by company size 50-5000 employees.';
+  result.classList.add('visible');
+}
+
+function createInstantlyCampaign(){
+  const btn=document.getElementById('createCampaignBtn');
+  const result=document.getElementById('campaignResult');
+  const name=document.getElementById('campaignName').value;
+  const vertical=document.getElementById('targetVertical').value;
+  const hook=document.getElementById('painPointHook').value;
+  const sender=document.getElementById('senderEmail').value.trim();
+  if(!name){alert('Please enter a campaign name.');return;}
+  if(!sender){alert('Please enter a sender email address.');return;}
+  btn.disabled=true;btn.textContent='Preparing...';
+  result.classList.remove('visible');
+  setTimeout(()=>{
+    result.innerHTML='<strong>&#9889; Campaign Ready: '+name+'</strong><br><br>'
+      +'&#10003; Campaign name set<br>'
+      +'&#10003; 5-email sequence written<br>'
+      +'&#10003; Target vertical: '+vertical+'<br>'
+      +'&#10003; Sender: '+sender+'<br><br>'
+      +'<strong>Next:</strong> Copy the campaign details and paste them into Claude chat \u2014 Claude will create the campaign live in Instantly for you!';
+    result.classList.add('visible');
+    btn.disabled=false;btn.textContent='&#9889; Create Instantly Campaign';
+  },600);
+}
+
+function buildPrompt(product,topN,timeRange,sites){
+  const siteList=sites.join(', ');
+  return `You are a competitive intelligence analyst with web search capability. Search the following sources: ${siteList} for complaints, frustrations, criticism, and pain points related to "${product}" posted within the last ${timeRange}.\n\nThe topic may be a software product, a business process, an industry challenge, or any other subject. Search broadly and surface the most commonly discussed frustrations.\n\nProduce the TOP ${topN} most-discussed pain points, ranked by estimated volume (most mentions first).\n\nFor EACH pain point provide:\n1. category: short descriptive name\n2. complaint: 2-3 sentence description based on what people actually say\n3. tag: one of: pricing, tech, support, ux, hype\n4. complaint_count: realistic estimated mentions (top: 500-2000, lower: 50-300)\n5. sources: array from: "reddit","hackernews","linkedin","g2","capterra","trustradius"\n6. verticals: top 4-5 industries most affected, each with name and pct (must sum to 100). Use: Healthcare, Manufacturing, Insurance, Financial Services, Retail, Technology, Logistics, Real Estate, Education, Nonprofit, Professional Services, Media, Telecommunications, Government, Other\n7. slingr_counter: 1-2 sentences on how Slingr (unified low-code platform) addresses this pain point\n8. search_queries: array of 2-3 actual search queries you used to find this complaint\n9. evidence: array of 2-3 short quote-style snippets representing what real users actually said\n\nAlso provide: total_mentions (integer), summary (3-4 sentences).\nReturn ONLY valid JSON, no markdown, no backticks.\nSchema: {"complaints":[{"category":"string","complaint":"string","tag":"pricing|tech|support|ux|hype","complaint_count":1500,"sources":["reddit","linkedin"],"verticals":[{"name":"Healthcare","pct":34},{"name":"Other","pct":66}],"slingr_counter":"string","search_queries":["query 1","query 2"],"evidence":["User quote 1","User quote 2"]}],"total_mentions":12000,"summary":"string"}`;
+}
+
+async function scanProduct(product,topN,timeRange,sites){
+  const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:buildPrompt(product,topN,timeRange,sites)})});
+  if(!res.ok){const t=await res.text();throw new Error('HTTP '+res.status+': '+t.slice(0,300));}
+  const data=await res.json();
+  if(data.error)throw new Error(data.error);
+  const raw=(data.text||'').replace(/```json|```/g,'').trim();
+  const m=raw.match(/\{[\s\S]*\}/);
+  if(!m)throw new Error('No JSON in response: '+raw.slice(0,200));
+  return JSON.parse(m[0]);
+}
+
+async function startScan(){
+  const product=document.getElementById('productInput').value.trim()||'Salesforce';
+  const compare=document.getElementById('compareInput').value.trim();
+  const topN=document.getElementById('topN').value;
+  const timeRange=document.getElementById('timeRange').value;
+  const sites=getCheckedSites();
+  if(!sites.length){alert('Please select at least one source.');return;}
+  const btn=document.getElementById('scanBtn'),statusBar=document.getElementById('statusBar'),statusText=document.getElementById('statusText'),skeletons=document.getElementById('skeletons'),tabBar=document.getElementById('tabBar'),results=document.getElementById('results'),errorBox=document.getElementById('errorBox'),panelPrimary=document.getElementById('panel-primary'),panelCompare=document.getElementById('panel-compare');
+  btn.disabled=true;btn.textContent='Scanning...';
+  document.getElementById('pdfBtn').disabled=true;
+  document.getElementById('campaignBtn').disabled=true;
+  statusBar.classList.add('active');skeletons.classList.add('visible');tabBar.classList.remove('visible');results.classList.remove('visible');panelPrimary.innerHTML='';panelCompare.innerHTML='';errorBox.classList.remove('visible');switchTab('primary');
+  document.getElementById('tab1label').textContent=product;
+  document.getElementById('tab2').style.display=compare?'block':'none';
+  if(compare)document.getElementById('tab2label').textContent=compare;
+  const steps=['Searching '+sites.slice(0,3).join(', ')+'...','Analyzing pain points from the last '+timeRange+'...','Estimating volumes...','Identifying industry verticals...','Writing Slingr counters...',compare?'Now scanning '+compare+'...':'Finalising...','Almost done...'];
+  let si=0;const tick=setInterval(()=>{if(si<steps.length)statusText.textContent=steps[si++];},7000);
+  try{
+    const parsed=await scanProduct(product,topN,timeRange,sites);
+    lastScanData=parsed;lastScanTopic=product;
+    renderPanel(panelPrimary,parsed.complaints||[],parsed.total_mentions,parsed.summary,product);
+    if(compare){statusText.textContent='Now scanning '+compare+'...';const parsed2=await scanProduct(compare,topN,timeRange,sites);renderPanel(panelCompare,parsed2.complaints||[],parsed2.total_mentions,parsed2.summary,compare);}
+    clearInterval(tick);tabBar.classList.add('visible');results.classList.add('visible');
+    document.getElementById('pdfBtn').disabled=false;
+    document.getElementById('campaignBtn').disabled=false;
+  }catch(err){clearInterval(tick);errorBox.textContent='Error: '+err.message;errorBox.classList.add('visible');console.error(err);}
+  skeletons.classList.remove('visible');statusBar.classList.remove('active');btn.disabled=false;btn.innerHTML='&#9654; Scan Again';
+}
+
+function renderSources(c,i){
+  const queries=(c.search_queries||[]).map(q=>'<span class="query-pill">'+q+'</span>').join('');
+  const evidence=(c.evidence||[]).map(e=>'<div class="evidence-item">&#8220;'+e+'&#8221;</div>').join('');
+  const queriesHtml=queries?'<div class="sources-panel-label">&#128269; Search queries used</div>'+queries:'';
+  const evidenceHtml=evidence?'<div class="sources-panel-label">&#128172; What users actually said</div>'+evidence:'';
+  if(!queriesHtml&&!evidenceHtml)return'';
+  return'<button class="sources-toggle" onclick="toggleSources('+i+',this)">&#9654; How we found this</button>'
+    +'<div class="sources-panel" id="src-'+i+'">'+queriesHtml+evidenceHtml+'</div>';
+}
+
+function toggleSources(i,btn){
+  const panel=document.getElementById('src-'+i);
+  if(!panel)return;
+  panel.classList.toggle('open');
+  btn.textContent=panel.classList.contains('open')?'\u25BE How we found this':'\u25B6 How we found this';
+}
+
+function renderVerticals(verticals){if(!verticals||!verticals.length)return'';const pills=verticals.map(v=>{const icon=VERTICAL_ICONS[v.name]||VERTICAL_ICONS['Other'];return'<span class="vertical-pill">'+icon+' '+v.name+' <span class="vertical-pct">'+v.pct+'%</span></span>';}).join('');return'<div class="verticals-block"><div class="verticals-label">Industry Breakdown</div><div class="verticals-list">'+pills+'</div></div>';}
+
+function renderPanel(panelEl,list,totalMentions,summary,productName){
+  const items=list.slice(0,20),maxCnt=Math.max(...items.map(c=>c.complaint_count||0),1);
+  const total=totalMentions||items.reduce((s,c)=>s+(c.complaint_count||0),0);
+  const rc=items.filter(c=>(c.sources||[]).includes('reddit')).length;
+  const hc=items.filter(c=>(c.sources||[]).includes('hackernews')).length;
+  const lc=items.filter(c=>(c.sources||[]).includes('linkedin')).length;
+  const gc=items.filter(c=>(c.sources||[]).includes('g2')||(c.sources||[]).includes('capterra')||(c.sources||[]).includes('trustradius')).length;
+  const stats='<div class="stats-row"><div class="stat-box"><div class="stat-value">'+items.length+'</div><div class="stat-label">Issues</div></div><div class="stat-box"><div class="stat-value">'+total.toLocaleString()+'</div><div class="stat-label">Mentions</div></div><div class="stat-box"><div class="stat-value">'+rc+'</div><div class="stat-label">Reddit</div></div><div class="stat-box"><div class="stat-value">'+lc+'</div><div class="stat-label">LinkedIn</div></div><div class="stat-box"><div class="stat-value">'+gc+'</div><div class="stat-label">Reviews</div></div></div>';
+  const cards=items.map((c,i)=>{
+    const pct=Math.round(((c.complaint_count||0)/maxCnt)*100);
+    const srcs=c.sources||[];
+    const badges=(srcs.includes('reddit')?'<span class="src-badge src-reddit">Reddit</span>':'')+(srcs.includes('hackernews')?'<span class="src-badge src-hn">Hacker News</span>':'')+(srcs.includes('linkedin')?'<span class="src-badge" style="background:#0a1020;color:#6ab4ff;border:1px solid #1a3060">LinkedIn</span>':'')+(srcs.includes('g2')?'<span class="src-badge" style="background:#1a1000;color:#ffd04a;border:1px solid #5c4000">G2</span>':'')+(srcs.includes('capterra')?'<span class="src-badge" style="background:#0a1020;color:#6ab4ff;border:1px solid #1a3060">Capterra</span>':'')+(srcs.includes('trustradius')?'<span class="src-badge" style="background:#0f0a1a;color:#c07aff;border:1px solid #3d1a60">TrustRadius</span>':'');
+    const exportBtn='<div style="margin-top:0.7rem;text-align:right"><button onclick="exportComplaint('+i+')" style="background:#1a1a6e;color:#9090ff;border:1px solid #2a2a9e;border-radius:3px;padding:0.25rem 0.7rem;font-size:0.65rem;font-family:Inter,sans-serif;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer">&#128640; Export to Campaign</button></div>';
+    return'<div class="complaint-item"><div class="rank-col"><div class="rank-num">#'+(i+1)+'</div><div class="rank-count"><strong>'+(c.complaint_count||0).toLocaleString()+'</strong>mentions</div><div class="bar-wrap"><div class="bar" style="width:'+pct+'%"></div></div></div><div class="complaint-body"><div class="title-row"><span class="cat-label">'+c.category+'</span><span class="tag tag-'+c.tag+'">'+(TAG_LABELS[c.tag]||c.tag.toUpperCase())+'</span></div><div class="source-badges">'+badges+'</div><div class="complaint-text">'+c.complaint+'</div>'+renderVerticals(c.verticals)+'<div class="slingr-block"><span class="slingr-icon">&#x26A1;</span><span><span class="slingr-label">Slingr Counter:</span> '+c.slingr_counter+'</span></div>'+renderSources(c,i)+exportBtn+'</div></div>';
+  }).join('');
+  const summaryHtml=summary?'<div class="summary-section"><div class="summary-label">Summary \u2014 '+productName+'</div><div class="summary-box">'+summary+'</div></div>':'';
+  panelEl.innerHTML='<div class="panel-inner">'+stats+cards+summaryHtml+'</div>';
+}
+</script>
+</body>
+</html>
