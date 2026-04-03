@@ -35,6 +35,8 @@
   .btn-scan:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 45px rgba(255,69,0,0.42)}
   .btn-pdf{background:linear-gradient(135deg,#006b5c,#00c2a8);color:white;box-shadow:0 0 28px rgba(0,194,168,0.22)}
   .btn-pdf:hover:not(:disabled){transform:translateY(-2px)}
+  .btn-campaign{background:linear-gradient(135deg,#1a1a6e,#3a3ab0);color:white;box-shadow:0 0 28px rgba(58,58,176,0.22)}
+  .btn-campaign:hover:not(:disabled){transform:translateY(-2px)}
   .btn:disabled{opacity:0.45;cursor:not-allowed}
   .status-wrap{max-width:900px;margin:0 auto 1.5rem}
   .status-bar{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);padding:0.85rem 1.4rem;border-radius:4px;font-size:0.76rem;color:var(--muted);display:none}
@@ -83,6 +85,14 @@
   .vertical-pct{font-weight:700;color:#00c2a8}
   .slingr-block{background:linear-gradient(135deg,#031a17,#04201c);border:1px solid var(--slingr-border);border-left:3px solid var(--slingr);border-radius:4px;padding:0.7rem 1rem;font-size:0.77rem;line-height:1.62;color:#9ee8de;display:flex;gap:0.5rem;align-items:flex-start}
   .slingr-icon{color:var(--slingr);flex-shrink:0;margin-top:0.06rem}.slingr-label{color:var(--slingr);font-weight:700}
+  .sources-toggle{margin-top:0.6rem;background:none;border:none;color:var(--muted);font-size:0.65rem;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:0.06em;text-transform:uppercase;padding:0;display:flex;align-items:center;gap:0.3rem}
+  .sources-toggle:hover{color:#aaa}
+  .sources-panel{display:none;margin-top:0.6rem;background:#0d0d0d;border:1px solid #1e1e1e;border-radius:4px;padding:0.8rem 1rem;font-size:0.72rem;line-height:1.7}
+  .sources-panel.open{display:block}
+  .sources-panel-label{font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.35rem;margin-top:0.6rem}
+  .sources-panel-label:first-child{margin-top:0}
+  .query-pill{display:inline-block;background:#111;border:1px solid #2a2a2a;border-radius:3px;padding:0.15rem 0.5rem;margin:0.15rem 0.2rem 0.15rem 0;font-size:0.68rem;color:#888;font-family:monospace}
+  .evidence-item{color:#999;padding:0.2rem 0;border-left:2px solid #2a2a2a;padding-left:0.6rem;margin:0.25rem 0;font-style:italic}
   .summary-section{margin-top:1.5rem}
   .summary-label{font-size:0.68rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem}
   .summary-box{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);padding:1.3rem 1.5rem;border-radius:4px;font-size:0.81rem;line-height:1.85;color:#b8b8b8}
@@ -91,6 +101,37 @@
   .skeletons{display:none;max-width:900px;margin:0 auto}.skeletons.visible{display:block}
   .loading-skeleton{background:linear-gradient(90deg,var(--card) 25%,#1e1e1e 50%,var(--card) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;height:130px;margin-bottom:0.8rem}
   @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:100;overflow-y:auto;padding:2rem 1rem}
+  .modal-overlay.visible{display:flex;align-items:flex-start;justify-content:center}
+  .modal{background:#131313;border:1px solid #2a2a2a;border-radius:10px;max-width:720px;width:100%;padding:2rem;position:relative;margin:auto}
+  .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+  .modal-title{font-size:1.1rem;font-weight:700;color:var(--text)}
+  .modal-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;padding:0.2rem 0.5rem;border-radius:4px;line-height:1}
+  .modal-close:hover{color:var(--text);background:#222}
+  .modal-section{margin-bottom:1.2rem}
+  .modal-section-label{font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem}
+  .modal-field{background:#0e0e0e;border:1px solid var(--border);border-radius:4px;padding:0.65rem 0.85rem;font-size:0.82rem;color:var(--text);width:100%;font-family:'Inter',sans-serif;resize:vertical;outline:none;line-height:1.5}
+  .modal-field:focus{border-color:#444}
+  .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  @media(max-width:560px){.modal-grid{grid-template-columns:1fr}}
+  .email-block{background:#0a0a0a;border:1px solid var(--border);border-radius:6px;padding:1rem;margin-bottom:0.7rem}
+  .email-num{font-size:0.65rem;color:var(--slingr);font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem}
+  .modal-actions{display:flex;gap:0.8rem;flex-wrap:wrap;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--border)}
+  .btn-sm{padding:0.7rem 1.4rem;font-family:'Inter',sans-serif;font-weight:700;font-size:0.8rem;border-radius:4px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;letter-spacing:0.04em;border:none}
+  .btn-prospects{background:#0a1a0a;color:#6bff9a;border:1px solid #1a4a1a}
+  .btn-prospects:hover:not(:disabled){background:#0f2a0f;transform:translateY(-1px)}
+  .btn-create{background:linear-gradient(135deg,#ff4500,#ff7034);color:white}
+  .btn-create:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 0 20px rgba(255,69,0,0.3)}
+  .btn-sm:disabled{opacity:0.45;cursor:not-allowed}
+  .info-box{border-radius:6px;padding:1rem;margin-top:1rem;font-size:0.78rem;line-height:1.6;display:none}
+  .info-box.visible{display:block}
+  .info-box.green{background:#0a1a0a;border:1px solid #1a4a1a;color:#6bff9a}
+  .info-box.orange{background:#1a0e00;border:1px solid #4a2a00;color:#ffb04a}
+  .next-steps{margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid #1e1e1e}
+  .next-steps-label{font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.8rem}
+  .next-step-item{display:flex;gap:0.75rem;align-items:flex-start;font-size:0.78rem;color:#888;margin-bottom:0.6rem}
+  .next-step-num{background:#1a1a6e;color:#9090ff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0}
+  .next-step-item strong{color:#aaa}
   footer{text-align:center;margin-top:3rem;color:#333;font-size:0.68rem;line-height:1.8}
   footer em{color:var(--slingr);font-style:normal}footer a{color:var(--muted);text-decoration:none}
 </style>
@@ -110,8 +151,8 @@
     <div class="ctrl-group">
       <label>Number of top results</label>
       <select id="topN">
-    <option value="5" selected>Top 5</option>
-        <option value="15">Top 15</option>
+        <option value="5" selected>Top 5</option>
+        <option value="10">Top 10</option>
         <option value="20">Top 20</option>
       </select>
     </div>
@@ -149,6 +190,7 @@
 <div class="btn-row">
   <button class="btn btn-scan" id="scanBtn" onclick="startScan()">&#9654; Scan Now</button>
   <button class="btn btn-pdf" id="pdfBtn" onclick="downloadPDF()" disabled>&#11015; Download PDF</button>
+  <button class="btn btn-campaign" id="campaignBtn" onclick="openCampaignModal(0)" disabled>&#128640; Export to Campaign</button>
 </div>
 <div class="status-wrap">
   <div class="status-bar" id="statusBar"><span class="pulse"></span><span id="statusText">Initializing...</span></div>
@@ -168,69 +210,8 @@
   <div class="panel af-tab-panel" id="panel-compare"></div>
 </div>
 <footer>Powered by Claude + Web Search &nbsp;&middot;&nbsp; Sources: Reddit, LinkedIn, Hacker News, G2, Capterra &nbsp;&middot;&nbsp; <em>Slingr</em> counters generated by AI</footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script>
-const TAG_LABELS={pricing:'PRICING',tech:'TECHNICAL',support:'SUPPORT',ux:'UX/UI',hype:'OVERHYPE'};
-const VERTICAL_ICONS={'Healthcare':'&#127973;','Manufacturing':'&#127981;','Insurance':'&#128206;','Financial Services':'&#128200;','Retail':'&#128722;','Technology':'&#128187;','Logistics':'&#128666;','Real Estate':'&#127968;','Education':'&#127979;','Nonprofit':'&#10084;','Professional Services':'&#128084;','Media':'&#127916;','Telecommunications':'&#128222;','Government':'&#127963;','Other':'&#127757;'};
-document.querySelectorAll('.site-chip').forEach(chip=>{chip.addEventListener('click',()=>{const cb=chip.querySelector('input');cb.checked=!cb.checked;chip.classList.toggle('checked',cb.checked);});});
-function getCheckedSites(){return[...document.querySelectorAll('.site-chip input:checked')].map(cb=>cb.value);}
-function switchTab(which){document.getElementById('panel-primary').classList.toggle('visible',which==='primary');document.getElementById('panel-compare').classList.toggle('visible',which==='compare');document.getElementById('tab1').classList.toggle('active-tab',which==='primary');document.getElementById('tab2').classList.toggle('active-tab',which==='compare');}
-function downloadPDF(){const btn=document.getElementById('pdfBtn');btn.disabled=true;btn.textContent='Generating PDF...';html2pdf().set({margin:0.5,filename:'pain-point-report.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,backgroundColor:'#0b0b0b'},jsPDF:{unit:'in',format:'letter',orientation:'portrait'},pagebreak:{mode:['avoid-all','css','legacy']}}).from(document.getElementById('results')).save().then(()=>{btn.disabled=false;btn.textContent='\u2b07 Download PDF';});}
-function buildPrompt(product,topN,timeRange,sites){
-  const siteList=sites.join(', ');
-  return `You are a competitive intelligence analyst with web search capability. Search the following sources: ${siteList} for complaints, frustrations, criticism, and pain points related to "${product}" posted within the last ${timeRange}.\n\nThe topic may be a software product, a business process, an industry challenge, or any other subject. Search broadly and surface the most commonly discussed frustrations.\n\nProduce the TOP ${topN} most-discussed pain points, ranked by estimated volume (most mentions first).\n\nFor EACH pain point provide:\n1. category: short descriptive name (e.g. "Pricing Complexity", "Manual Data Entry", "Poor Integrations")\n2. complaint: 2-3 sentence description of the frustration based on what people actually say\n3. tag: one of: pricing, tech, support, ux, hype\n4. complaint_count: realistic estimated mentions (top issues: 500-2000, lower: 50-300)\n5. sources: array from: "reddit", "hackernews", "linkedin", "g2", "capterra", "trustradius"\n6. verticals: top 4-5 industries most affected, each with name and pct (must sum to 100). Use: Healthcare, Manufacturing, Insurance, Financial Services, Retail, Technology, Logistics, Real Estate, Education, Nonprofit, Professional Services, Media, Telecommunications, Government, Other\n7. slingr_counter: 1-2 sentences on how Slingr (a unified low-code platform that replaces fragmented SaaS stacks) specifically addresses this pain point\n\nAlso provide: total_mentions (integer), summary (3-4 sentence overview).\n\nReturn ONLY valid JSON, no markdown, no backticks.\nSchema: {"complaints":[{"category":"string","complaint":"string","tag":"pricing|tech|support|ux|hype","complaint_count":1500,"sources":["reddit","linkedin"],"verticals":[{"name":"Healthcare","pct":34},{"name":"Other","pct":66}],"slingr_counter":"string"}],"total_mentions":12000,"summary":"string"}`;
-}
-async function scanProduct(product,topN,timeRange,sites){
-  const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:buildPrompt(product,topN,timeRange,sites)})});
-  if(!res.ok){const t=await res.text();throw new Error('HTTP '+res.status+': '+t.slice(0,300));}
-  const data=await res.json();
-  if(data.error)throw new Error(data.error);
-  const raw=(data.text||'').replace(/```json|```/g,'').trim();
-  const m=raw.match(/\{[\s\S]*\}/);
-  if(!m)throw new Error('No JSON in response: '+raw.slice(0,200));
-  return JSON.parse(m[0]);
-}
-async function startScan(){
-  const product=document.getElementById('productInput').value.trim()||'Salesforce';
-  const compare=document.getElementById('compareInput').value.trim();
-  const topN=document.getElementById('topN').value;
-  const timeRange=document.getElementById('timeRange').value;
-  const sites=getCheckedSites();
-  if(!sites.length){alert('Please select at least one source.');return;}
-  const btn=document.getElementById('scanBtn'),statusBar=document.getElementById('statusBar'),statusText=document.getElementById('statusText'),skeletons=document.getElementById('skeletons'),tabBar=document.getElementById('tabBar'),results=document.getElementById('results'),errorBox=document.getElementById('errorBox'),panelPrimary=document.getElementById('panel-primary'),panelCompare=document.getElementById('panel-compare');
-  btn.disabled=true;btn.textContent='Scanning...';document.getElementById('pdfBtn').disabled=true;
-  statusBar.classList.add('active');skeletons.classList.add('visible');tabBar.classList.remove('visible');results.classList.remove('visible');panelPrimary.innerHTML='';panelCompare.innerHTML='';errorBox.classList.remove('visible');switchTab('primary');
-  document.getElementById('tab1label').textContent=product;
-  document.getElementById('tab2').style.display=compare?'block':'none';
-  if(compare)document.getElementById('tab2label').textContent=compare;
-  const steps=['Searching '+sites.slice(0,3).join(', ')+'...','Analyzing pain points from the last '+timeRange+'...','Estimating volumes...','Identifying industry verticals...','Writing Slingr counters...',compare?'Now scanning '+compare+'...':'Finalising...','Almost done...'];
-  let si=0;const tick=setInterval(()=>{if(si<steps.length)statusText.textContent=steps[si++];},7000);
-  try{
-    const parsed=await scanProduct(product,topN,timeRange,sites);
-    renderPanel(panelPrimary,parsed.complaints||[],parsed.total_mentions,parsed.summary,product);
-    if(compare){statusText.textContent='Now scanning '+compare+'...';const parsed2=await scanProduct(compare,topN,timeRange,sites);renderPanel(panelCompare,parsed2.complaints||[],parsed2.total_mentions,parsed2.summary,compare);}
-    clearInterval(tick);tabBar.classList.add('visible');results.classList.add('visible');document.getElementById('pdfBtn').disabled=false;
-  }catch(err){clearInterval(tick);errorBox.textContent='Error: '+err.message;errorBox.classList.add('visible');console.error(err);}
-  skeletons.classList.remove('visible');statusBar.classList.remove('active');btn.disabled=false;btn.innerHTML='&#9654; Scan Again';
-}
-function renderVerticals(verticals){if(!verticals||!verticals.length)return'';const pills=verticals.map(v=>{const icon=VERTICAL_ICONS[v.name]||VERTICAL_ICONS['Other'];return'<span class="vertical-pill">'+icon+' '+v.name+' <span class="vertical-pct">'+v.pct+'%</span></span>';}).join('');return'<div class="verticals-block"><div class="verticals-label">Industry Breakdown</div><div class="verticals-list">'+pills+'</div></div>';}
-function renderPanel(panelEl,list,totalMentions,summary,productName){
-  const items=list.slice(0,20),maxCnt=Math.max(...items.map(c=>c.complaint_count||0),1);
-  const total=totalMentions||items.reduce((s,c)=>s+(c.complaint_count||0),0);
-  const rc=items.filter(c=>(c.sources||[]).includes('reddit')).length;
-  const hc=items.filter(c=>(c.sources||[]).includes('hackernews')).length;
-  const lc=items.filter(c=>(c.sources||[]).includes('linkedin')).length;
-  const gc=items.filter(c=>(c.sources||[]).includes('g2')||(c.sources||[]).includes('capterra')||(c.sources||[]).includes('trustradius')).length;
-  const stats='<div class="stats-row"><div class="stat-box"><div class="stat-value">'+items.length+'</div><div class="stat-label">Issues</div></div><div class="stat-box"><div class="stat-value">'+total.toLocaleString()+'</div><div class="stat-label">Mentions</div></div><div class="stat-box"><div class="stat-value">'+rc+'</div><div class="stat-label">Reddit</div></div><div class="stat-box"><div class="stat-value">'+lc+'</div><div class="stat-label">LinkedIn</div></div><div class="stat-box"><div class="stat-value">'+gc+'</div><div class="stat-label">Reviews</div></div></div>';
-  const cards=items.map((c,i)=>{
-    const pct=Math.round(((c.complaint_count||0)/maxCnt)*100);
-    const srcs=c.sources||[];
-    const badges=(srcs.includes('reddit')?'<span class="src-badge src-reddit">Reddit</span>':'')+(srcs.includes('hackernews')?'<span class="src-badge src-hn">Hacker News</span>':'')+(srcs.includes('linkedin')?'<span class="src-badge" style="background:#0a1020;color:#6ab4ff;border:1px solid #1a3060">LinkedIn</span>':'')+(srcs.includes('g2')?'<span class="src-badge" style="background:#1a1000;color:#ffd04a;border:1px solid #5c4000">G2</span>':'')+(srcs.includes('capterra')?'<span class="src-badge" style="background:#0a1020;color:#6ab4ff;border:1px solid #1a3060">Capterra</span>':'')+(srcs.includes('trustradius')?'<span class="src-badge" style="background:#0f0a1a;color:#c07aff;border:1px solid #3d1a60">TrustRadius</span>':'');
-    return'<div class="complaint-item"><div class="rank-col"><div class="rank-num">#'+(i+1)+'</div><div class="rank-count"><strong>'+(c.complaint_count||0).toLocaleString()+'</strong>mentions</div><div class="bar-wrap"><div class="bar" style="width:'+pct+'%"></div></div></div><div class="complaint-body"><div class="title-row"><span class="cat-label">'+c.category+'</span><span class="tag tag-'+c.tag+'">'+(TAG_LABELS[c.tag]||c.tag.toUpperCase())+'</span></div><div class="source-badges">'+badges+'</div><div class="complaint-text">'+c.complaint+'</div>'+renderVerticals(c.verticals)+'<div class="slingr-block"><span class="slingr-icon">&#x26A1;</span><span><span class="slingr-label">Slingr Counter:</span> '+c.slingr_counter+'</span></div></div></div>';
-  }).join('');
-  const summaryHtml=summary?'<div class="summary-section"><div class="summary-label">Summary \u2014 '+productName+'</div><div class="summary-box">'+summary+'</div></div>':'';
-  panelEl.innerHTML='<div class="panel-inner">'+stats+cards+summaryHtml+'</div>';
-}
-</script>
-</body>
-</html>
+
+<div class="modal-overlay" id="campaignModal">
+  <div class="modal">
+    <div class="modal-h
+
