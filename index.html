@@ -127,11 +127,6 @@
   .info-box.visible{display:block}
   .info-box.green{background:#0a1a0a;border:1px solid #1a4a1a;color:#6bff9a}
   .info-box.orange{background:#1a0e00;border:1px solid #4a2a00;color:#ffb04a}
-  .next-steps{margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid #1e1e1e}
-  .next-steps-label{font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.8rem}
-  .next-step-item{display:flex;gap:0.75rem;align-items:flex-start;font-size:0.78rem;color:#888;margin-bottom:0.6rem}
-  .next-step-num{background:#1a1a6e;color:#9090ff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0}
-  .next-step-item strong{color:#aaa}
   footer{text-align:center;margin-top:3rem;color:#333;font-size:0.68rem;line-height:1.8}
   footer em{color:var(--slingr);font-style:normal}footer a{color:var(--muted);text-decoration:none}
 </style>
@@ -267,13 +262,30 @@
     </div>
     <div class="info-box green" id="prospectsResult"></div>
     <div class="info-box orange" id="campaignResult"></div>
-    <div class="next-steps">
-      <div class="next-steps-label">What happens next</div>
-      <div class="next-step-item"><span class="next-step-num">1</span><span><strong>Review the 5 emails above</strong> — edit any copy before creating the campaign</span></div>
-      <div class="next-step-item"><span class="next-step-num">2</span><span><strong>Enter your sender email</strong> — the inbox this campaign will send from</span></div>
-      <div class="next-step-item"><span class="next-step-num">3</span><span><strong>Click Create Instantly Campaign</strong> — the campaign and all 5 emails get built in Instantly automatically</span></div>
-      <div class="next-step-item"><span class="next-step-num">4</span><span><strong>Upload contacts from Seamless</strong> — export a CSV using the prospect query above and import into Instantly</span></div>
-      <div class="next-step-item"><span class="next-step-num">5</span><span><strong>Activate in Instantly</strong> — review one final time then hit Activate to start sending</span></div>
+    <div style="margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid #1e1e1e">
+      <div style="font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.8rem">What happens next</div>
+      <div style="display:flex;flex-direction:column;gap:0.6rem">
+        <div style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.78rem;color:#888">
+          <span style="background:#1a1a6e;color:#9090ff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0">1</span>
+          <span><strong style="color:#aaa">Review the 5 emails above</strong> — edit any copy before creating the campaign</span>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.78rem;color:#888">
+          <span style="background:#1a1a6e;color:#9090ff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0">2</span>
+          <span><strong style="color:#aaa">Enter your sender email</strong> — the inbox this campaign will send from</span>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.78rem;color:#888">
+          <span style="background:#1a1a6e;color:#9090ff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0">3</span>
+          <span><strong style="color:#aaa">Click Create Instantly Campaign</strong> — then click the blue Copy button and paste into your Claude chat window</span>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.78rem;color:#888">
+          <span style="background:#1a1a6e;color:#9090ff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0">4</span>
+          <span><strong style="color:#aaa">Upload contacts from Seamless</strong> — export a CSV using the prospect query above and import into Instantly</span>
+        </div>
+        <div style="display:flex;gap:0.75rem;align-items:flex-start;font-size:0.78rem;color:#888">
+          <span style="background:#1a1a6e;color:#9090ff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;flex-shrink:0">5</span>
+          <span><strong style="color:#aaa">Activate in Instantly</strong> — review one final time then hit Activate to start sending</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -287,14 +299,10 @@ const VERTICAL_ICONS={
   'Financial Services':'&#128200;','Banking':'&#127981;','Wealth Management':'&#128176;','Private Equity':'&#128184;','Accounting & CPA':'&#128202;','Fintech':'&#128187;',
   'Professional Services':'&#128084;','Management Consulting':'&#128084;','Legal':'&#9878;','Staffing & Recruiting':'&#128101;','Marketing Agencies':'&#128227;','IT Services':'&#128187;','Accounting Firms':'&#128202;',
   'Technology':'&#128187;','SaaS':'&#9729;','Cybersecurity':'&#128274;','Data & Analytics':'&#128202;','IT Infrastructure':'&#128290;',
-  'Retail':'&#128722;','E-commerce':'&#128722;','Brick & Mortar':'&#127968;','Wholesale':'&#128230;',
-  'Logistics':'&#128666;','Supply Chain':'&#128667;','Warehousing':'&#127968;','Last Mile Delivery':'&#128652;',
-  'Real Estate':'&#127968;','Commercial Real Estate':'&#127963;','Residential':'&#127968;','Property Management':'&#128202;',
-  'Education':'&#127979;','K-12':'&#127979;','Higher Education':'&#127979;','EdTech':'&#128187;','Corporate Training':'&#128084;',
-  'Nonprofit':'&#10084;','Associations':'&#128101;','Foundations':'&#127968;',
-  'Media':'&#127916;','Publishing':'&#128213;','Broadcasting':'&#128250;','Digital Media':'&#128247;',
-  'Telecommunications':'&#128222;','Wireless':'&#128247;','Broadband':'&#127760;',
-  'Government':'&#127963;','Federal':'&#127963;','State & Local Government':'&#127968;','Public Safety':'&#128737;',
+  'Retail':'&#128722;','E-commerce':'&#128722;','Logistics':'&#128666;','Supply Chain':'&#128667;',
+  'Real Estate':'&#127968;','Commercial Real Estate':'&#127963;','Education':'&#127979;','K-12':'&#127979;','Higher Education':'&#127979;','EdTech':'&#128187;','Corporate Training':'&#128084;',
+  'Nonprofit':'&#10084;','Media':'&#127916;','Publishing':'&#128213;','Telecommunications':'&#128222;',
+  'Government':'&#127963;','Federal Government':'&#127963;','State & Local Government':'&#127968;',
   'Other':'&#127757;'
 };
 let lastScanData=null,lastScanTopic='';
@@ -332,30 +340,27 @@ function findProspects(){
   result.classList.add('visible');
 }
 function createInstantlyCampaign(){
-  const btn=document.getElementById('createCampaignBtn');
   const result=document.getElementById('campaignResult');
   const name=document.getElementById('campaignName').value;
   const vertical=document.getElementById('targetVertical').value;
-  const hook=document.getElementById('painPointHook').value;
   const sender=document.getElementById('senderEmail').value.trim();
+  const e1=document.getElementById('email1').value;
+  const e2=document.getElementById('email2').value;
+  const e3=document.getElementById('email3').value;
+  const e4=document.getElementById('email4').value;
+  const e5=document.getElementById('email5').value;
   if(!name){alert('Please enter a campaign name.');return;}
   if(!sender){alert('Please enter a sender email address.');return;}
-  btn.disabled=true;btn.textContent='Preparing...';
-  result.classList.remove('visible');
-  setTimeout(()=>{
-    result.innerHTML='<strong>&#9889; Campaign Ready: '+name+'</strong><br><br>'
-      +'&#10003; Campaign name set<br>'
-      +'&#10003; 5-email sequence written<br>'
-      +'&#10003; Target vertical: '+vertical+'<br>'
-      +'&#10003; Sender: '+sender+'<br><br>'
-      +'<strong>Next:</strong> Copy the campaign details and paste them into Claude chat \u2014 Claude will create the campaign live in Instantly for you!';
-    result.classList.add('visible');
-    btn.disabled=false;btn.textContent='&#9889; Create Instantly Campaign';
-  },600);
+  const subjectMatch=e1.match(/^Subject: (.+)/m);
+  const subject=subjectMatch?subjectMatch[1]:'Seeing this a lot in '+vertical;
+  const prompt='Create an Instantly campaign with these details:\n\nCampaign name: '+name+'\nSender email: '+sender+'\nSubject: '+subject+'\n\nEmail 1 (Day 1):\n'+e1+'\n\nEmail 2 (Day 3):\n'+e2+'\n\nEmail 3 (Day 7):\n'+e3+'\n\nEmail 4 (Day 12):\n'+e4+'\n\nEmail 5 (Day 18):\n'+e5;
+  result.innerHTML='<strong>&#9889; Ready!</strong> Click the button below, then paste into your Claude chat and hit send.<br><br>'
+    +'<button onclick="navigator.clipboard.writeText(this.dataset.prompt).then(()=>{this.textContent=\'✓ Copied — now paste into Claude chat!\';this.style.background=\'#0a3a0a\';this.style.color=\'#6bff9a\'})" data-prompt="'+prompt.replace(/"/g,'&quot;')+'" style="background:#1a1a6e;color:#9090ff;border:1px solid #2a2a9e;border-radius:4px;padding:0.6rem 1.2rem;font-size:0.8rem;font-family:Inter,sans-serif;font-weight:700;cursor:pointer;width:100%;text-align:center">&#128203; Copy Campaign to Clipboard</button>';
+  result.classList.add('visible');
 }
 function buildPrompt(product,topN,timeRange,sites){
   const siteList=sites.join(', ');
-  return `You are a competitive intelligence analyst with web search capability. Search the following sources: ${siteList} for complaints, frustrations, criticism, and pain points related to "${product}" posted within the last ${timeRange}.\n\nThe topic may be a software product, a business process, an industry challenge, or any other subject. Search broadly and surface the most commonly discussed frustrations.\n\nProduce the TOP ${topN} most-discussed pain points, ranked by estimated volume (most mentions first).\n\nFor EACH pain point provide:\n1. category: short descriptive name\n2. complaint: 2-3 sentence description based on what people actually say\n3. tag: one of: pricing, tech, support, ux, hype\n4. complaint_count: realistic estimated mentions (top: 500-2000, lower: 50-300)\n5. sources: array from: "reddit","hackernews","linkedin","g2","capterra","trustradius"\n6. verticals: top 4-5 sub-industries most affected, each with name and pct (must sum to 100). Use specific sub-verticals rather than broad categories. Examples: instead of "Healthcare" use "Hospitals & Health Systems", "Health Insurance", "Medical Devices", or "Pharmaceuticals". Instead of "Professional Services" use "Management Consulting", "Legal", "Staffing & Recruiting", "Marketing Agencies", "IT Services", or "Accounting Firms". Instead of "Financial Services" use "Banking", "Wealth Management", "Private Equity", "Accounting & CPA", or "Fintech". Instead of "Manufacturing" use "Industrial Manufacturing", "Automotive", "Aerospace & Defense", "Food & Beverage", or "Consumer Goods". Instead of "Insurance" use "Property & Casualty", "Life Insurance", "Health Insurance Carriers", or "Specialty Insurance". Instead of "Technology" use "SaaS", "Cybersecurity", "Data & Analytics", or "IT Infrastructure". For other industries use: Retail, E-commerce, Logistics, Supply Chain, Real Estate, Commercial Real Estate, K-12, Higher Education, EdTech, Corporate Training, Nonprofit, Media, Publishing, Telecommunications, Federal Government, State & Local Government, or Other\n7. slingr_counter: 1-2 sentences on how Slingr (unified low-code platform) addresses this pain point\n8. search_queries: array of 2-3 actual search queries you used to find this complaint\n9. evidence: array of 2-3 short quote-style snippets representing what real users actually said\n\nAlso provide: total_mentions (integer), summary (3-4 sentences).\nReturn ONLY valid JSON, no markdown, no backticks.\nSchema: {"complaints":[{"category":"string","complaint":"string","tag":"pricing|tech|support|ux|hype","complaint_count":1500,"sources":["reddit","linkedin"],"verticals":[{"name":"Hospitals & Health Systems","pct":34},{"name":"Other","pct":66}],"slingr_counter":"string","search_queries":["query 1","query 2"],"evidence":["User quote 1","User quote 2"]}],"total_mentions":12000,"summary":"string"}`;
+  return `You are a competitive intelligence analyst with web search capability. Search the following sources: ${siteList} for complaints, frustrations, criticism, and pain points related to "${product}" posted within the last ${timeRange}.\n\nProduce the TOP ${topN} most-discussed pain points, ranked by estimated volume.\n\nFor EACH pain point provide:\n1. category: short descriptive name\n2. complaint: 2-3 sentence description based on what people actually say\n3. tag: one of: pricing, tech, support, ux, hype\n4. complaint_count: realistic estimated mentions (top: 500-2000, lower: 50-300)\n5. sources: array from: "reddit","hackernews","linkedin","g2","capterra","trustradius"\n6. verticals: top 4-5 sub-industries most affected, each with name and pct (must sum to 100). Use specific sub-verticals: instead of "Healthcare" use "Hospitals & Health Systems", "Health Insurance", "Medical Devices", or "Pharmaceuticals". Instead of "Professional Services" use "Management Consulting", "Legal", "Staffing & Recruiting", "Marketing Agencies", "IT Services", or "Accounting Firms". Instead of "Financial Services" use "Banking", "Wealth Management", "Private Equity", "Accounting & CPA", or "Fintech". Instead of "Manufacturing" use "Industrial Manufacturing", "Automotive", "Aerospace & Defense", "Food & Beverage", or "Consumer Goods". Instead of "Insurance" use "Property & Casualty", "Life Insurance", "Health Insurance Carriers", or "Specialty Insurance". Instead of "Technology" use "SaaS", "Cybersecurity", "Data & Analytics", or "IT Infrastructure". Others: Retail, E-commerce, Logistics, Supply Chain, Real Estate, Commercial Real Estate, K-12, Higher Education, EdTech, Corporate Training, Nonprofit, Media, Telecommunications, Federal Government, State & Local Government, Other\n7. slingr_counter: 1-2 sentences on how Slingr (unified low-code platform) addresses this\n8. search_queries: array of 2-3 actual search queries used\n9. evidence: array of 2-3 short user quote snippets\n\nAlso: total_mentions (integer), summary (3-4 sentences).\nReturn ONLY valid JSON, no markdown.\nSchema: {"complaints":[{"category":"string","complaint":"string","tag":"pricing|tech|support|ux|hype","complaint_count":1500,"sources":["reddit"],"verticals":[{"name":"Hospitals & Health Systems","pct":34},{"name":"Other","pct":66}],"slingr_counter":"string","search_queries":["q1"],"evidence":["quote1"]}],"total_mentions":12000,"summary":"string"}`;
 }
 async function scanProduct(product,topN,timeRange,sites){
   const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:buildPrompt(product,topN,timeRange,sites)})});
@@ -382,7 +387,7 @@ async function startScan(){
   document.getElementById('tab1label').textContent=product;
   document.getElementById('tab2').style.display=compare?'block':'none';
   if(compare)document.getElementById('tab2label').textContent=compare;
-  const steps=['Searching '+sites.slice(0,3).join(', ')+'...','Analyzing pain points from the last '+timeRange+'...','Estimating volumes...','Identifying industry verticals...','Writing Slingr counters...',compare?'Now scanning '+compare+'...':'Finalising...','Almost done...'];
+  const steps=['Searching '+sites.slice(0,3).join(', ')+'...','Analyzing pain points...','Estimating volumes...','Identifying sub-verticals...','Writing Slingr counters...',compare?'Now scanning '+compare+'...':'Finalising...','Almost done...'];
   let si=0;const tick=setInterval(()=>{if(si<steps.length)statusText.textContent=steps[si++];},7000);
   try{
     const parsed=await scanProduct(product,topN,timeRange,sites);
@@ -398,28 +403,21 @@ async function startScan(){
 function renderSources(c,i){
   const queries=(c.search_queries||[]).map(q=>'<span class="query-pill">'+q+'</span>').join('');
   const evidence=(c.evidence||[]).map(e=>'<div class="evidence-item">&#8220;'+e+'&#8221;</div>').join('');
-  const queriesHtml=queries?'<div class="sources-panel-label">&#128269; Search queries used</div>'+queries:'';
-  const evidenceHtml=evidence?'<div class="sources-panel-label">&#128172; What users actually said</div>'+evidence:'';
-  if(!queriesHtml&&!evidenceHtml)return'';
-  return'<button class="sources-toggle" onclick="toggleSources('+i+',this)">&#9654; How we found this</button>'
-    +'<div class="sources-panel" id="src-'+i+'">'+queriesHtml+evidenceHtml+'</div>';
+  const qHtml=queries?'<div class="sources-panel-label">&#128269; Search queries used</div>'+queries:'';
+  const eHtml=evidence?'<div class="sources-panel-label">&#128172; What users actually said</div>'+evidence:'';
+  if(!qHtml&&!eHtml)return'';
+  return'<button class="sources-toggle" onclick="toggleSources('+i+',this)">&#9654; How we found this</button><div class="sources-panel" id="src-'+i+'">'+qHtml+eHtml+'</div>';
 }
 function toggleSources(i,btn){
-  const panel=document.getElementById('src-'+i);
-  if(!panel)return;
-  panel.classList.toggle('open');
-  btn.textContent=panel.classList.contains('open')?'\u25BE How we found this':'\u25B6 How we found this';
+  const p=document.getElementById('src-'+i);if(!p)return;
+  p.classList.toggle('open');
+  btn.textContent=p.classList.contains('open')?'\u25BE How we found this':'\u25B6 How we found this';
 }
-function renderVerticals(verticals){
-  if(!verticals||!verticals.length)return'';
-  const pills=verticals.map(v=>{const icon=VERTICAL_ICONS[v.name]||VERTICAL_ICONS['Other'];return'<span class="vertical-pill">'+icon+' '+v.name+' <span class="vertical-pct">'+v.pct+'%</span></span>';}).join('');
-  return'<div class="verticals-block"><div class="verticals-label">Industry Breakdown</div><div class="verticals-list">'+pills+'</div></div>';
-}
+function renderVerticals(v){if(!v||!v.length)return'';return'<div class="verticals-block"><div class="verticals-label">Industry Breakdown</div><div class="verticals-list">'+v.map(x=>'<span class="vertical-pill">'+(VERTICAL_ICONS[x.name]||'&#127757;')+' '+x.name+' <span class="vertical-pct">'+x.pct+'%</span></span>').join('')+'</div></div>';}
 function renderPanel(panelEl,list,totalMentions,summary,productName){
   const items=list.slice(0,20),maxCnt=Math.max(...items.map(c=>c.complaint_count||0),1);
   const total=totalMentions||items.reduce((s,c)=>s+(c.complaint_count||0),0);
   const rc=items.filter(c=>(c.sources||[]).includes('reddit')).length;
-  const hc=items.filter(c=>(c.sources||[]).includes('hackernews')).length;
   const lc=items.filter(c=>(c.sources||[]).includes('linkedin')).length;
   const gc=items.filter(c=>(c.sources||[]).includes('g2')||(c.sources||[]).includes('capterra')||(c.sources||[]).includes('trustradius')).length;
   const stats='<div class="stats-row"><div class="stat-box"><div class="stat-value">'+items.length+'</div><div class="stat-label">Issues</div></div><div class="stat-box"><div class="stat-value">'+total.toLocaleString()+'</div><div class="stat-label">Mentions</div></div><div class="stat-box"><div class="stat-value">'+rc+'</div><div class="stat-label">Reddit</div></div><div class="stat-box"><div class="stat-value">'+lc+'</div><div class="stat-label">LinkedIn</div></div><div class="stat-box"><div class="stat-value">'+gc+'</div><div class="stat-label">Reviews</div></div></div>';
