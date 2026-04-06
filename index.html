@@ -40,7 +40,6 @@
   .btn-tree{background:linear-gradient(135deg,#1a3a1a,#2a6a2a);color:#6bff9a;box-shadow:0 0 28px rgba(107,255,154,0.15)}
   .btn-tree:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 45px rgba(107,255,154,0.3)}
   .btn:disabled{opacity:0.45;cursor:not-allowed}
-  /* TREE DIAGRAM */
   .tree-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:200;overflow-y:auto;padding:2rem 1rem}
   .tree-overlay.visible{display:flex;align-items:flex-start;justify-content:center}
   .tree-modal{background:#0f0f0f;border:1px solid #2a2a2a;border-radius:10px;max-width:860px;width:100%;padding:2rem;margin:auto}
@@ -59,7 +58,6 @@
   .tree-children{padding-left:0.2rem}
   .tree-label{display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer;border-radius:4px;padding:0.28rem 0.65rem;font-size:0.76rem;font-weight:600;transition:opacity 0.15s;user-select:none;margin-bottom:0.1rem}
   .tree-label:hover{opacity:0.8}
-  .tree-label-pain{font-size:0.84rem;font-weight:700}
   .tree-label-pain.tag-pricing{background:#1e0a0a;color:#ff8a8a;border:1px solid #4a1515}
   .tree-label-pain.tag-tech{background:#0a1520;color:#6dd3ff;border:1px solid #1a3a50}
   .tree-label-pain.tag-support{background:#1a1a08;color:#ffe066;border:1px solid #3d3d12}
@@ -67,7 +65,6 @@
   .tree-label-pain.tag-hype{background:#15081a;color:#cf7aff;border:1px solid #330d45}
   .tree-label-vertical{background:#0e1a1a;color:#7ecfcf;border:1px solid #1a3030}
   .tree-label-persona{background:#1a0e1a;color:#cf9fff;border:1px solid #3a1a3a}
-  .tree-label-evidence{background:#111;color:#666;border:1px solid #1e1e1e;font-weight:400;font-style:italic;font-size:0.69rem;cursor:default;max-width:500px;white-space:normal;line-height:1.5}
   .tree-pct{font-size:0.63rem;opacity:0.65;font-weight:400}
   .tree-count{font-size:0.63rem;opacity:0.55;font-weight:400}
   .tree-toggle{font-size:0.6rem;opacity:0.45;display:inline-block;width:12px;text-align:center}
@@ -250,18 +247,27 @@
 <div class="tree-overlay" id="treeOverlay">
   <div class="tree-modal">
     <div class="tree-modal-header">
-      <div class="tree-modal-title">&#128336; Complaint Tree Diagram &nbsp;<span style="font-size:0.7rem;color:var(--muted);font-weight:400">Topic → Industry → Job Title → Pain Point</span></div>
+      <div class="tree-modal-title">&#128336; Complaint Tree Diagram</div>
       <button class="tree-modal-close" onclick="closeTreeDiagram()">&#x2715;</button>
     </div>
+    <div style="display:flex;gap:0.5rem;margin-bottom:1.2rem;background:#0a0a0a;border:1px solid #222;border-radius:6px;padding:0.3rem">
+      <button id="toggleByIndustry" onclick="setTreeMode('industry')" style="flex:1;padding:0.5rem 1rem;font-family:Inter,sans-serif;font-size:0.75rem;font-weight:700;border:none;border-radius:4px;cursor:pointer;background:#1a3a1a;color:#6bff9a;transition:all 0.15s">&#127981; By Industry</button>
+      <button id="toggleByPain" onclick="setTreeMode('pain')" style="flex:1;padding:0.5rem 1rem;font-family:Inter,sans-serif;font-size:0.75rem;font-weight:700;border:none;border-radius:4px;cursor:pointer;background:transparent;color:var(--muted);transition:all 0.15s">&#128270; By Pain Point</button>
+    </div>
+    <div id="painNav" style="display:none;align-items:center;justify-content:space-between;margin-bottom:1rem;background:#111;border:1px solid #222;border-radius:6px;padding:0.6rem 1rem">
+      <button onclick="navPain(-1)" style="background:none;border:1px solid #333;color:#aaa;border-radius:4px;padding:0.3rem 0.8rem;font-family:Inter,sans-serif;font-size:0.8rem;cursor:pointer">&#8592; Prev</button>
+      <span id="painNavLabel" style="font-size:0.78rem;font-weight:700;color:var(--text);text-align:center;flex:1;padding:0 1rem"></span>
+      <button onclick="navPain(1)" style="background:none;border:1px solid #333;color:#aaa;border-radius:4px;padding:0.3rem 0.8rem;font-family:Inter,sans-serif;font-size:0.8rem;cursor:pointer">Next &#8594;</button>
+    </div>
     <div class="tree-legend">
-      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#ffb04a"></div>Topic</div>
+      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#ffb04a"></div>Topic/Pain Point</div>
       <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#7ecfcf"></div>Industry</div>
       <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#cf9fff"></div>Job Title</div>
-      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#ff8a8a"></div>Pricing Pain</div>
-      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#6dd3ff"></div>Technical Pain</div>
-      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#ffe066"></div>Support Pain</div>
-      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#6bff9a"></div>UX Pain</div>
-      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#cf7aff"></div>Overhype Pain</div>
+      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#ff8a8a"></div>Pricing</div>
+      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#6dd3ff"></div>Technical</div>
+      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#ffe066"></div>Support</div>
+      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#6bff9a"></div>UX</div>
+      <div class="tree-legend-item"><div class="tree-legend-dot" style="background:#cf7aff"></div>Overhype</div>
     </div>
     <div id="treeContent"></div>
   </div>
@@ -340,6 +346,8 @@ const VERTICAL_ICONS={
   'Other':'&#127757;'
 };
 let lastScanData=null,lastScanTopic='';
+let treeMode='industry',painIndex=0;
+
 document.querySelectorAll('.site-chip').forEach(chip=>{chip.addEventListener('click',()=>{const cb=chip.querySelector('input');cb.checked=!cb.checked;chip.classList.toggle('checked',cb.checked);});});
 function getCheckedSites(){return[...document.querySelectorAll('.site-chip input:checked')].map(cb=>cb.value);}
 function switchTab(which){document.getElementById('panel-primary').classList.toggle('visible',which==='primary');document.getElementById('panel-compare').classList.toggle('visible',which==='compare');document.getElementById('tab1').classList.toggle('active-tab',which==='primary');document.getElementById('tab2').classList.toggle('active-tab',which==='compare');}
@@ -396,7 +404,7 @@ function createInstantlyCampaign(){
 }
 function buildPrompt(product,topN,timeRange,sites){
   const siteList=sites.join(', ');
-  return `You are a competitive intelligence analyst with web search capability. Search the following sources: ${siteList} for complaints, frustrations, criticism, and pain points related to "${product}" posted within the last ${timeRange}.\n\nProduce the TOP ${topN} most-discussed pain points, ranked by estimated volume.\n\nFor EACH pain point provide:\n1. category: short descriptive name\n2. complaint: 2-3 sentence description based on what people actually say\n3. tag: one of: pricing, tech, support, ux, hype\n4. complaint_count: realistic estimated mentions (top: 500-2000, lower: 50-300)\n5. sources: array from: "reddit","hackernews","linkedin","g2","capterra","trustradius"\n6. verticals: top 4-5 sub-industries most affected, each with name and pct (must sum to 100). Use specific sub-verticals: instead of "Healthcare" use "Hospitals & Health Systems", "Health Insurance", "Medical Devices", or "Pharmaceuticals". Instead of "Professional Services" use "Management Consulting", "Legal", "Staffing & Recruiting", "Marketing Agencies", "IT Services", or "Accounting Firms". Instead of "Financial Services" use "Banking", "Wealth Management", "Private Equity", "Accounting & CPA", or "Fintech". Instead of "Manufacturing" use "Industrial Manufacturing", "Automotive", "Aerospace & Defense", "Food & Beverage", or "Consumer Goods". Instead of "Insurance" use "Property & Casualty", "Life Insurance", "Health Insurance Carriers", or "Specialty Insurance". Instead of "Technology" use "SaaS", "Cybersecurity", "Data & Analytics", or "IT Infrastructure". Others: Retail, E-commerce, Logistics, Supply Chain, Real Estate, Commercial Real Estate, K-12, Higher Education, EdTech, Corporate Training, Nonprofit, Media, Telecommunications, Federal Government, State & Local Government, Other\n7. slingr_counter: 1-2 sentences on how Slingr (unified low-code platform) addresses this\n8. search_queries: array of 2-3 actual search queries used\n9. evidence: array of 2-3 short user quote snippets\n10. personas: top 3-4 job titles most likely making this complaint, each with title and pct (must sum to 100). Infer from explicit mentions AND from the perspective of the complaint (cost complaints = CFO/VP Finance, integration complaints = IT Director/Developer, user adoption = Sales Manager/Sales Ops, implementation = Project Manager/IT Director, support = Salesforce Admin/CRM Manager). Use titles like: Salesforce Administrator, VP of Sales, IT Director, CFO, Sales Operations Manager, CRM Manager, VP of Operations, Director of IT, Project Manager, Business Analyst, VP of Finance, CIO, Sales Manager, Marketing Operations Manager, Customer Success Manager\n\nAlso: total_mentions (integer), summary (3-4 sentences).\nReturn ONLY valid JSON, no markdown.\nSchema: {"complaints":[{"category":"string","complaint":"string","tag":"pricing|tech|support|ux|hype","complaint_count":1500,"sources":["reddit"],"verticals":[{"name":"Hospitals & Health Systems","pct":34},{"name":"Other","pct":66}],"slingr_counter":"string","search_queries":["q1"],"evidence":["quote1"],"personas":[{"title":"IT Director","pct":40},{"title":"CFO","pct":60}]}],"total_mentions":12000,"summary":"string"}`;
+  return `You are a competitive intelligence analyst with web search capability. Search the following sources: ${siteList} for complaints, frustrations, criticism, and pain points related to "${product}" posted within the last ${timeRange}.\n\nProduce the TOP ${topN} most-discussed pain points, ranked by estimated volume.\n\nFor EACH pain point provide:\n1. category: short descriptive name\n2. complaint: 2-3 sentence description based on what people actually say\n3. tag: one of: pricing, tech, support, ux, hype\n4. complaint_count: realistic estimated mentions (top: 500-2000, lower: 50-300)\n5. sources: array from: "reddit","hackernews","linkedin","g2","capterra","trustradius"\n6. verticals: top 4-5 sub-industries most affected, each with name and pct (must sum to 100). Use specific sub-verticals: instead of "Healthcare" use "Hospitals & Health Systems", "Health Insurance", "Medical Devices", or "Pharmaceuticals". Instead of "Professional Services" use "Management Consulting", "Legal", "Staffing & Recruiting", "Marketing Agencies", "IT Services", or "Accounting Firms". Instead of "Financial Services" use "Banking", "Wealth Management", "Private Equity", "Accounting & CPA", or "Fintech". Instead of "Manufacturing" use "Industrial Manufacturing", "Automotive", "Aerospace & Defense", "Food & Beverage", or "Consumer Goods". Instead of "Insurance" use "Property & Casualty", "Life Insurance", "Health Insurance Carriers", or "Specialty Insurance". Instead of "Technology" use "SaaS", "Cybersecurity", "Data & Analytics", or "IT Infrastructure". Others: Retail, E-commerce, Logistics, Supply Chain, Real Estate, Commercial Real Estate, K-12, Higher Education, EdTech, Corporate Training, Nonprofit, Media, Telecommunications, Federal Government, State & Local Government, Other\n7. slingr_counter: 1-2 sentences on how Slingr (unified low-code platform) addresses this\n8. search_queries: array of 2-3 actual search queries used\n9. evidence: array of 2-3 short user quote snippets\n10. personas: top 3-4 job titles most likely making this complaint, each with title and pct (must sum to 100). Infer from explicit mentions AND from the perspective of the complaint. Use titles like: Salesforce Administrator, VP of Sales, IT Director, CFO, Sales Operations Manager, CRM Manager, VP of Operations, Director of IT, Project Manager, Business Analyst, VP of Finance, CIO, Sales Manager, Marketing Operations Manager, Customer Success Manager\n\nAlso: total_mentions (integer), summary (3-4 sentences).\nReturn ONLY valid JSON, no markdown.\nSchema: {"complaints":[{"category":"string","complaint":"string","tag":"pricing|tech|support|ux|hype","complaint_count":1500,"sources":["reddit"],"verticals":[{"name":"Hospitals & Health Systems","pct":34},{"name":"Other","pct":66}],"slingr_counter":"string","search_queries":["q1"],"evidence":["quote1"],"personas":[{"title":"IT Director","pct":40},{"title":"CFO","pct":60}]}],"total_mentions":12000,"summary":"string"}`;
 }
 async function scanProduct(product,topN,timeRange,sites){
   const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:buildPrompt(product,topN,timeRange,sites)})});
@@ -438,12 +446,73 @@ async function startScan(){
   }catch(err){clearInterval(tick);errorBox.textContent='Error: '+err.message;errorBox.classList.add('visible');console.error(err);}
   skeletons.classList.remove('visible');statusBar.classList.remove('active');btn.disabled=false;btn.innerHTML='&#9654; Scan Again';
 }
+function setTreeMode(mode){
+  treeMode=mode;
+  const byInd=document.getElementById('toggleByIndustry');
+  const byPain=document.getElementById('toggleByPain');
+  const painNav=document.getElementById('painNav');
+  if(mode==='industry'){
+    byInd.style.background='#1a3a1a';byInd.style.color='#6bff9a';
+    byPain.style.background='transparent';byPain.style.color='var(--muted)';
+    painNav.style.display='none';
+    renderIndustryTree();
+  }else{
+    byPain.style.background='#1a1a6e';byPain.style.color='#9090ff';
+    byInd.style.background='transparent';byInd.style.color='var(--muted)';
+    painNav.style.display='flex';
+    painIndex=0;
+    renderPainTree(0);
+  }
+}
+function navPain(dir){
+  const len=(lastScanData.complaints||[]).length;
+  painIndex=Math.max(0,Math.min(len-1,painIndex+dir));
+  renderPainTree(painIndex);
+}
+function renderPainTree(idx){
+  const complaints=lastScanData.complaints||[];
+  const c=complaints[idx];if(!c)return;
+  document.getElementById('painNavLabel').textContent='#'+(idx+1)+' of '+complaints.length+' \u2014 '+c.category;
+  const tagBg={pricing:'#1e0a0a',tech:'#0a1520',support:'#1a1a08',ux:'#081a0e',hype:'#15081a'};
+  const tagColor={pricing:'#ff8a8a',tech:'#6dd3ff',support:'#ffe066',ux:'#6bff9a',hype:'#cf7aff'};
+  const tagBorder={pricing:'#4a1515',tech:'#1a3a50',support:'#3d3d12',ux:'#123d20',hype:'#330d45'};
+  let vertHtml='';
+  (c.verticals||[]).forEach((v,vi)=>{
+    let personaHtml='';
+    (c.personas||[]).forEach(p=>{
+      personaHtml+='<div class="tree-node"><span class="tree-label tree-label-persona" style="cursor:default"><span class="tree-toggle"></span>&#128100; '+p.title+' <span class="tree-pct">'+p.pct+'%</span></span></div>';
+    });
+    vertHtml+='<div class="tree-node">'
+      +'<span class="tree-label tree-label-vertical" onclick="toggleTree(\'ptv-'+vi+'\')">'
+      +'<span class="tree-toggle" id="tog-ptv-'+vi+'">&#9654;</span>'
+      +(VERTICAL_ICONS[v.name]||'&#127757;')+' '+v.name+' <span class="tree-pct">'+v.pct+'%</span>'
+      +'</span>'
+      +'<div class="tree-children collapsed" id="ptv-'+vi+'"><div class="tree-children">'+personaHtml+'</div></div>'
+      +'</div>';
+  });
+  document.getElementById('treeContent').innerHTML='<div class="tree-root">'
+    +'<span class="tree-label" style="background:'+tagBg[c.tag]+';color:'+tagColor[c.tag]+';border:1px solid '+tagBorder[c.tag]+';font-size:0.88rem;font-weight:800;cursor:default">'
+    +'<span class="tree-toggle"></span>'+c.category+' <span class="tree-count">'+(c.complaint_count||0).toLocaleString()+' mentions</span>'
+    +'</span>'
+    +'<div style="margin:0.5rem 0 0.8rem 0.5rem;font-size:0.72rem;color:#777;font-style:italic;line-height:1.5;max-width:560px">'+c.complaint+'</div>'
+    +'<div class="tree-children"><div class="tree-children">'+vertHtml+'</div></div>'
+    +'</div>';
+}
 function openTreeDiagram(){
   if(!lastScanData||!lastScanData.complaints||!lastScanData.complaints.length)return;
+  treeMode='industry';painIndex=0;
+  document.getElementById('toggleByIndustry').style.background='#1a3a1a';
+  document.getElementById('toggleByIndustry').style.color='#6bff9a';
+  document.getElementById('toggleByPain').style.background='transparent';
+  document.getElementById('toggleByPain').style.color='var(--muted)';
+  document.getElementById('painNav').style.display='none';
+  document.getElementById('treeOverlay').classList.add('visible');
+  renderIndustryTree();
+}
+function renderIndustryTree(){
+  if(!lastScanData||!lastScanData.complaints)return;
   const complaints=lastScanData.complaints;
   const topic=lastScanTopic||'Scan Results';
-
-  // Build map: vertical -> persona -> complaints[]
   const vertMap={};
   complaints.forEach(c=>{
     (c.verticals||[]).forEach(v=>{
@@ -455,61 +524,26 @@ function openTreeDiagram(){
       });
     });
   });
-
-  // Sort verticals by pct descending
   const sortedVerts=Object.entries(vertMap).sort((a,b)=>b[1].pct-a[1].pct);
-
   let vertHtml='';
   sortedVerts.forEach(([vertName,vertData],vi)=>{
     const sortedPersonas=Object.entries(vertData.personas).sort((a,b)=>b[1].pct-a[1].pct);
     let personaHtml='';
     sortedPersonas.forEach(([personaTitle,personaData],pi)=>{
-      const painHtml=personaData.complaints.map(c=>{
-        return'<div class="tree-node">'
-          +'<span class="tree-label tree-label-pain tag-'+c.tag+'" style="cursor:default;font-size:0.74rem">'
-          +'<span class="tree-toggle"></span>'
-          +c.category+' <span class="tree-count">'+(c.complaint_count||0).toLocaleString()+' mentions</span>'
-          +'</span>'
-          +'<div style="padding-left:1.4rem;margin-top:0.2rem;font-size:0.69rem;color:#777;font-style:italic;line-height:1.5;max-width:480px">'+c.complaint+'</div>'
-          +'</div>';
-      }).join('');
-      personaHtml+='<div class="tree-node">'
-        +'<span class="tree-label tree-label-persona" onclick="toggleTree(\'tp-'+vi+'-'+pi+'\')">'
-        +'<span class="tree-toggle" id="tog-tp-'+vi+'-'+pi+'">&#9654;</span>'
-        +'&#128100; '+personaTitle+' <span class="tree-pct">'+personaData.pct+'%</span>'
-        +'</span>'
-        +'<div class="tree-children collapsed" id="tp-'+vi+'-'+pi+'"><div class="tree-children">'+painHtml+'</div></div>'
-        +'</div>';
+      const painHtml=personaData.complaints.map(c=>'<div class="tree-node"><span class="tree-label tree-label-pain tag-'+c.tag+'" style="cursor:default;font-size:0.74rem"><span class="tree-toggle"></span>'+c.category+' <span class="tree-count">'+(c.complaint_count||0).toLocaleString()+' mentions</span></span><div style="padding-left:1.4rem;margin-top:0.2rem;font-size:0.69rem;color:#777;font-style:italic;line-height:1.5;max-width:480px">'+c.complaint+'</div></div>').join('');
+      personaHtml+='<div class="tree-node"><span class="tree-label tree-label-persona" onclick="toggleTree(\'tp-'+vi+'-'+pi+'\')"><span class="tree-toggle" id="tog-tp-'+vi+'-'+pi+'">&#9654;</span>&#128100; '+personaTitle+' <span class="tree-pct">'+personaData.pct+'%</span></span><div class="tree-children collapsed" id="tp-'+vi+'-'+pi+'"><div class="tree-children">'+painHtml+'</div></div></div>';
     });
-    vertHtml+='<div class="tree-node">'
-      +'<span class="tree-label tree-label-vertical" onclick="toggleTree(\'tv-'+vi+'\')">'
-      +'<span class="tree-toggle" id="tog-tv-'+vi+'">&#9654;</span>'
-      +(VERTICAL_ICONS[vertName]||'&#127757;')+' '+vertName+' <span class="tree-pct">'+vertData.pct+'%</span>'
-      +'</span>'
-      +'<div class="tree-children collapsed" id="tv-'+vi+'"><div class="tree-children">'+personaHtml+'</div></div>'
-      +'</div>';
+    vertHtml+='<div class="tree-node"><span class="tree-label tree-label-vertical" onclick="toggleTree(\'tv-'+vi+'\')"><span class="tree-toggle" id="tog-tv-'+vi+'">&#9654;</span>'+(VERTICAL_ICONS[vertName]||'&#127757;')+' '+vertName+' <span class="tree-pct">'+vertData.pct+'%</span></span><div class="tree-children collapsed" id="tv-'+vi+'"><div class="tree-children">'+personaHtml+'</div></div></div>';
   });
-
-  const html='<div class="tree-root">'
-    +'<span class="tree-label" style="background:#1a1000;color:#ffb04a;border:1px solid #5c3a00;font-size:0.9rem;font-weight:800;" onclick="toggleTree(\'tree-root-topic\')">'
-    +'<span class="tree-toggle" id="tog-tree-root-topic">&#9654;</span>'
-    +'&#128270; '+topic+' <span class="tree-count">'+complaints.length+' pain points found</span>'
-    +'</span>'
-    +'<div class="tree-children collapsed" id="tree-root-topic"><div class="tree-children">'+vertHtml+'</div></div>'
-    +'</div>';
-
-  document.getElementById('treeContent').innerHTML=html;
-  document.getElementById('treeOverlay').classList.add('visible');
+  document.getElementById('treeContent').innerHTML='<div class="tree-root"><span class="tree-label" style="background:#1a1000;color:#ffb04a;border:1px solid #5c3a00;font-size:0.9rem;font-weight:800;" onclick="toggleTree(\'tree-root-topic\')"><span class="tree-toggle" id="tog-tree-root-topic">&#9654;</span>&#128270; '+topic+' <span class="tree-count">'+complaints.length+' pain points found</span></span><div class="tree-children collapsed" id="tree-root-topic"><div class="tree-children">'+vertHtml+'</div></div></div>';
 }
 function closeTreeDiagram(){document.getElementById('treeOverlay').classList.remove('visible');}
 function toggleTree(id){
   const el=document.getElementById(id);if(!el)return;
   const isOpen=!el.classList.contains('collapsed');
   el.classList.toggle('collapsed');
-  const tog=document.getElementById('tog-'+id.replace('tree-','').replace(/^t/,'t'));
-  const togAlt=document.getElementById('tog-'+id);
-  const togEl=document.getElementById('tog-'+id)||tog;
-  if(togEl)togEl.textContent=isOpen?'\u25B6':'\u25BE';
+  const tog=document.getElementById('tog-'+id);
+  if(tog)tog.textContent=isOpen?'\u25B6':'\u25BE';
 }
 function renderPersonas(personas){
   if(!personas||!personas.length)return'';
