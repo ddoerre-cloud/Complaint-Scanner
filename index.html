@@ -29,6 +29,14 @@
   .site-chip input{display:none}
   .site-chip.checked{background:#1a1000;border-color:#5c3a00;color:#ffb04a}
   .site-chip.reddit.checked{background:#1a0b00;border-color:#5c2000;color:#ff7a4a}
+  .site-chip.custom.checked{background:#0a0a1a;border-color:#2a2a6e;color:#9090ff}
+  .add-subreddit-row{display:flex;align-items:center;gap:0.5rem;margin-top:0.6rem;padding-top:0.6rem;border-top:1px solid #1e1e1e}
+  .add-subreddit-input{background:#0e0e0e;border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'Inter',sans-serif;font-size:0.75rem;padding:0.3rem 0.65rem;outline:none;width:160px;transition:border-color 0.15s}
+  .add-subreddit-input:focus{border-color:#555}
+  .add-subreddit-input::placeholder{color:#444}
+  .add-subreddit-btn{background:#0a0a1a;border:1px solid #2a2a6e;color:#9090ff;border-radius:4px;padding:0.3rem 0.75rem;font-family:'Inter',sans-serif;font-size:0.72rem;font-weight:700;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+  .add-subreddit-btn:hover{background:#1a1a3e;border-color:#4a4ab0}
+  .add-subreddit-hint{font-size:0.65rem;color:#444;flex:1}
   .btn-row{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:2rem}
   .btn{border:none;padding:0.9rem 2.5rem;font-family:'Inter',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:0.04em;cursor:pointer;border-radius:4px;text-transform:uppercase;transition:all 0.2s}
   .btn-scan{background:linear-gradient(135deg,#ff4500,#ff7034);color:white;box-shadow:0 0 28px rgba(255,69,0,0.22)}
@@ -39,7 +47,11 @@
   .btn-campaign:hover:not(:disabled){transform:translateY(-2px)}
   .btn-tree{background:linear-gradient(135deg,#1a3a1a,#2a6a2a);color:#6bff9a;box-shadow:0 0 28px rgba(107,255,154,0.15)}
   .btn-tree:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 45px rgba(107,255,154,0.3)}
+  .btn-share{background:linear-gradient(135deg,#1a0a2e,#4a1a8e);color:#cf9fff;box-shadow:0 0 28px rgba(176,96,255,0.15)}
+  .btn-share:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 45px rgba(176,96,255,0.35)}
   .btn:disabled{opacity:0.45;cursor:not-allowed}
+  .share-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#1a0e1a;border:1px solid #b060ff;color:#cf9fff;padding:0.7rem 1.4rem;border-radius:6px;font-size:0.8rem;font-family:'Inter',sans-serif;font-weight:600;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
+  .share-toast.visible{opacity:1}
   .tree-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:200;overflow-y:auto;padding:2rem 1rem}
   .tree-overlay.visible{display:flex;align-items:flex-start;justify-content:center}
   .tree-modal{background:#0f0f0f;border:1px solid #2a2a2a;border-radius:10px;max-width:860px;width:100%;padding:2rem;margin:auto}
@@ -216,6 +228,11 @@
       <label class="site-chip checked"><input type="checkbox" value="Capterra.com" checked> Capterra</label>
       <label class="site-chip checked"><input type="checkbox" value="Trustradius.com" checked> TrustRadius</label>
     </div>
+    <div class="add-subreddit-row">
+      <input type="text" class="add-subreddit-input" id="newSubreddit" placeholder="r/networking" maxlength="40" onkeydown="if(event.key==='Enter')addSubreddit()">
+      <button class="add-subreddit-btn" onclick="addSubreddit()">+ Add Subreddit</button>
+      <span class="add-subreddit-hint">Add any subreddit to expand your search</span>
+    </div>
   </div>
 </div>
 <div class="btn-row">
@@ -223,7 +240,9 @@
   <button class="btn btn-pdf" id="pdfBtn" onclick="downloadPDF()" disabled>&#11015; Download PDF</button>
   <button class="btn btn-campaign" id="campaignBtn" onclick="openCampaignModal(0)" disabled>&#128640; Export to Campaign</button>
   <button class="btn btn-tree" id="treeBtn" onclick="openTreeDiagram()" disabled>&#128336; Tree Diagram</button>
+  <button class="btn btn-share" id="shareBtn" onclick="shareResults()" disabled>&#128279; Share Results</button>
 </div>
+<div class="share-toast" id="shareToast">&#10003; Link copied to clipboard!</div>
 <div class="status-wrap">
   <div class="status-bar" id="statusBar"><span class="pulse"></span><span id="statusText">Initializing...</span></div>
 </div>
@@ -349,6 +368,31 @@ let lastScanData=null,lastScanTopic='';
 let treeMode='industry',painIndex=0;
 
 document.querySelectorAll('.site-chip').forEach(chip=>{chip.addEventListener('click',()=>{const cb=chip.querySelector('input');cb.checked=!cb.checked;chip.classList.toggle('checked',cb.checked);});});
+
+function addSubreddit(){
+  const input=document.getElementById('newSubreddit');
+  let val=input.value.trim();
+  if(!val)return;
+  val=val.replace(/^\/?r\//i,'');
+  if(!val)return;
+  const subredditVal='r/'+val;
+  const existing=[...document.querySelectorAll('.site-chip input')].map(cb=>cb.value);
+  if(existing.includes(subredditVal)){input.value='';return;}
+  const row=document.getElementById('sitesRow');
+  const chip=document.createElement('label');
+  chip.className='site-chip reddit custom checked';
+  chip.innerHTML='<input type="checkbox" value="'+subredditVal+'" checked> '+subredditVal+' <span style="cursor:pointer;margin-left:0.2rem;opacity:0.6" onclick="this.parentElement.remove();event.stopPropagation()">&#x2715;</span>';
+  chip.addEventListener('click',(e)=>{
+    if(e.target.tagName==='SPAN')return;
+    const cb=chip.querySelector('input');
+    cb.checked=!cb.checked;
+    chip.classList.toggle('checked',cb.checked);
+  });
+  row.appendChild(chip);
+  input.value='';
+  input.focus();
+}
+
 function getCheckedSites(){return[...document.querySelectorAll('.site-chip input:checked')].map(cb=>cb.value);}
 function switchTab(which){document.getElementById('panel-primary').classList.toggle('visible',which==='primary');document.getElementById('panel-compare').classList.toggle('visible',which==='compare');document.getElementById('tab1').classList.toggle('active-tab',which==='primary');document.getElementById('tab2').classList.toggle('active-tab',which==='compare');}
 function downloadPDF(){const btn=document.getElementById('pdfBtn');btn.disabled=true;btn.textContent='Generating PDF...';html2pdf().set({margin:0.5,filename:'pain-point-report.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,backgroundColor:'#0b0b0b'},jsPDF:{unit:'in',format:'letter',orientation:'portrait'},pagebreak:{mode:['avoid-all','css','legacy']}}).from(document.getElementById('results')).save().then(()=>{btn.disabled=false;btn.textContent='\u2b07 Download PDF';});}
@@ -404,7 +448,7 @@ function createInstantlyCampaign(){
 }
 function buildPrompt(product,topN,timeRange,sites){
   const siteList=sites.join(', ');
-  return `You are a competitive intelligence analyst with web search capability. Search the following sources: ${siteList} for complaints, frustrations, criticism, and pain points related to "${product}" posted within the last ${timeRange}.\n\nProduce the TOP ${topN} most-discussed pain points, ranked by estimated volume.\n\nFor EACH pain point provide:\n1. category: short descriptive name\n2. complaint: 2-3 sentence description based on what people actually say\n3. tag: one of: pricing, tech, support, ux, hype\n4. complaint_count: realistic estimated mentions (top: 500-2000, lower: 50-300)\n5. sources: array from: "reddit","hackernews","linkedin","g2","capterra","trustradius"\n6. verticals: top 4-5 sub-industries most affected, each with name and pct (must sum to 100). Use specific sub-verticals: instead of "Healthcare" use "Hospitals & Health Systems", "Health Insurance", "Medical Devices", or "Pharmaceuticals". Instead of "Professional Services" use "Management Consulting", "Legal", "Staffing & Recruiting", "Marketing Agencies", "IT Services", or "Accounting Firms". Instead of "Financial Services" use "Banking", "Wealth Management", "Private Equity", "Accounting & CPA", or "Fintech". Instead of "Manufacturing" use "Industrial Manufacturing", "Automotive", "Aerospace & Defense", "Food & Beverage", or "Consumer Goods". Instead of "Insurance" use "Property & Casualty", "Life Insurance", "Health Insurance Carriers", or "Specialty Insurance". Instead of "Technology" use "SaaS", "Cybersecurity", "Data & Analytics", or "IT Infrastructure". Others: Retail, E-commerce, Logistics, Supply Chain, Real Estate, Commercial Real Estate, K-12, Higher Education, EdTech, Corporate Training, Nonprofit, Media, Telecommunications, Federal Government, State & Local Government, Other\n7. slingr_counter: 1-2 sentences on how Slingr (unified low-code platform) addresses this\n8. search_queries: array of 2-3 actual search queries used\n9. evidence: array of 2-3 short user quote snippets\n10. personas: top 3-4 job titles most likely making this complaint, each with title and pct (must sum to 100). Infer from explicit mentions AND from the perspective of the complaint. Use titles like: Salesforce Administrator, VP of Sales, IT Director, CFO, Sales Operations Manager, CRM Manager, VP of Operations, Director of IT, Project Manager, Business Analyst, VP of Finance, CIO, Sales Manager, Marketing Operations Manager, Customer Success Manager\n\nAlso: total_mentions (integer), summary (3-4 sentences).\nReturn ONLY valid JSON, no markdown.\nSchema: {"complaints":[{"category":"string","complaint":"string","tag":"pricing|tech|support|ux|hype","complaint_count":1500,"sources":["reddit"],"verticals":[{"name":"Hospitals & Health Systems","pct":34},{"name":"Other","pct":66}],"slingr_counter":"string","search_queries":["q1"],"evidence":["quote1"],"personas":[{"title":"IT Director","pct":40},{"title":"CFO","pct":60}]}],"total_mentions":12000,"summary":"string"}`;
+  return `You are a competitive intelligence analyst with web search capability. Search the following sources: ${siteList} for complaints, frustrations, criticism, and pain points related to "${product}" posted within the last ${timeRange}.\n\nProduce the TOP ${topN} most-discussed pain points, ranked by estimated volume.\n\nFor EACH pain point provide:\n1. category: short descriptive name\n2. complaint: 2-3 sentence description based on what people actually say\n3. tag: one of: pricing, tech, support, ux, hype\n4. complaint_count: realistic estimated mentions (top: 500-2000, lower: 50-300)\n5. sources: array from: "reddit","hackernews","linkedin","g2","capterra","trustradius"\n6. verticals: top 4-5 sub-industries most affected, each with name and pct (must sum to 100). Use specific sub-verticals: instead of "Healthcare" use "Hospitals & Health Systems","Health Insurance","Medical Devices", or "Pharmaceuticals". Instead of "Professional Services" use "Management Consulting","Legal","Staffing & Recruiting","Marketing Agencies","IT Services", or "Accounting Firms". Instead of "Financial Services" use "Banking","Wealth Management","Private Equity","Accounting & CPA", or "Fintech". Instead of "Manufacturing" use "Industrial Manufacturing","Automotive","Aerospace & Defense","Food & Beverage", or "Consumer Goods". Instead of "Insurance" use "Property & Casualty","Life Insurance","Health Insurance Carriers", or "Specialty Insurance". Instead of "Technology" use "SaaS","Cybersecurity","Data & Analytics", or "IT Infrastructure". Others: Retail, E-commerce, Logistics, Supply Chain, Real Estate, Commercial Real Estate, K-12, Higher Education, EdTech, Corporate Training, Nonprofit, Media, Telecommunications, Federal Government, State & Local Government, Other\n7. slingr_counter: 1-2 sentences on how Slingr (unified low-code platform) addresses this\n8. search_queries: array of 2-3 actual search queries used\n9. evidence: array of 2-3 short user quote snippets\n10. personas: top 3-4 job titles most likely making this complaint, each with title and pct (must sum to 100). Use titles like: Salesforce Administrator, VP of Sales, IT Director, CFO, Sales Operations Manager, CRM Manager, VP of Operations, Director of IT, Project Manager, Business Analyst, VP of Finance, CIO, Sales Manager, Marketing Operations Manager, Customer Success Manager\n\nAlso: total_mentions (integer), summary (3-4 sentences).\nReturn ONLY valid JSON, no markdown.\nSchema: {"complaints":[{"category":"string","complaint":"string","tag":"pricing|tech|support|ux|hype","complaint_count":1500,"sources":["reddit"],"verticals":[{"name":"Hospitals & Health Systems","pct":34},{"name":"Other","pct":66}],"slingr_counter":"string","search_queries":["q1"],"evidence":["quote1"],"personas":[{"title":"IT Director","pct":40},{"title":"CFO","pct":60}]}],"total_mentions":12000,"summary":"string"}`;
 }
 async function scanProduct(product,topN,timeRange,sites){
   const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:buildPrompt(product,topN,timeRange,sites)})});
@@ -428,6 +472,7 @@ async function startScan(){
   document.getElementById('pdfBtn').disabled=true;
   document.getElementById('campaignBtn').disabled=true;
   document.getElementById('treeBtn').disabled=true;
+  document.getElementById('shareBtn').disabled=true;
   statusBar.classList.add('active');skeletons.classList.add('visible');tabBar.classList.remove('visible');results.classList.remove('visible');panelPrimary.innerHTML='';panelCompare.innerHTML='';errorBox.classList.remove('visible');switchTab('primary');
   document.getElementById('tab1label').textContent=product;
   document.getElementById('tab2').style.display=compare?'block':'none';
@@ -437,15 +482,56 @@ async function startScan(){
   try{
     const parsed=await scanProduct(product,topN,timeRange,sites);
     lastScanData=parsed;lastScanTopic=product;
+    history.replaceState(null,'',window.location.pathname);
     renderPanel(panelPrimary,parsed.complaints||[],parsed.total_mentions,parsed.summary,product);
     if(compare){statusText.textContent='Now scanning '+compare+'...';const parsed2=await scanProduct(compare,topN,timeRange,sites);renderPanel(panelCompare,parsed2.complaints||[],parsed2.total_mentions,parsed2.summary,compare);}
     clearInterval(tick);tabBar.classList.add('visible');results.classList.add('visible');
     document.getElementById('pdfBtn').disabled=false;
     document.getElementById('campaignBtn').disabled=false;
     document.getElementById('treeBtn').disabled=false;
+    document.getElementById('shareBtn').disabled=false;
   }catch(err){clearInterval(tick);errorBox.textContent='Error: '+err.message;errorBox.classList.add('visible');console.error(err);}
   skeletons.classList.remove('visible');statusBar.classList.remove('active');btn.disabled=false;btn.innerHTML='&#9654; Scan Again';
 }
+function shareResults(){
+  if(!lastScanData||!lastScanTopic)return;
+  try{
+    const payload=JSON.stringify({topic:lastScanTopic,data:lastScanData});
+    const encoded=btoa(unescape(encodeURIComponent(payload)));
+    const url=window.location.origin+window.location.pathname+'#scan='+encoded;
+    navigator.clipboard.writeText(url).then(()=>{
+      const toast=document.getElementById('shareToast');
+      toast.classList.add('visible');
+      setTimeout(()=>toast.classList.remove('visible'),3000);
+    });
+  }catch(e){alert('Unable to generate share link: '+e.message);}
+}
+function loadFromHash(){
+  try{
+    const hash=window.location.hash;
+    if(!hash||!hash.startsWith('#scan='))return;
+    const encoded=hash.slice(6);
+    const payload=JSON.parse(decodeURIComponent(escape(atob(encoded))));
+    if(!payload.topic||!payload.data)return;
+    lastScanTopic=payload.topic;
+    lastScanData=payload.data;
+    const banner=document.createElement('div');
+    banner.style.cssText='max-width:900px;margin:0 auto 1.2rem;background:#1a0e1a;border:1px solid #3a1a3a;border-left:3px solid #b060ff;padding:0.75rem 1.2rem;border-radius:4px;font-size:0.78rem;color:#cf9fff;display:flex;align-items:center;justify-content:space-between;gap:1rem';
+    banner.innerHTML='<span>&#128279; <strong>Shared scan results</strong> \u2014 '+escapeHtml(lastScanTopic)+'</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:#cf9fff;cursor:pointer;font-size:1rem;padding:0">&#x2715;</button>';
+    document.querySelector('.btn-row').insertAdjacentElement('afterend',banner);
+    const panelPrimary=document.getElementById('panel-primary');
+    renderPanel(panelPrimary,lastScanData.complaints||[],lastScanData.total_mentions,lastScanData.summary,lastScanTopic);
+    document.getElementById('tabBar').classList.add('visible');
+    document.getElementById('results').classList.add('visible');
+    document.getElementById('pdfBtn').disabled=false;
+    document.getElementById('campaignBtn').disabled=false;
+    document.getElementById('treeBtn').disabled=false;
+    document.getElementById('shareBtn').disabled=false;
+    document.getElementById('tab1label').textContent=lastScanTopic;
+  }catch(e){console.warn('Could not load shared scan:',e);}
+}
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+window.addEventListener('load',loadFromHash);
 function setTreeMode(mode){
   treeMode=mode;
   const byInd=document.getElementById('toggleByIndustry');
@@ -482,21 +568,9 @@ function renderPainTree(idx){
     (c.personas||[]).forEach(p=>{
       personaHtml+='<div class="tree-node"><span class="tree-label tree-label-persona" style="cursor:default"><span class="tree-toggle"></span>&#128100; '+p.title+' <span class="tree-pct">'+p.pct+'%</span></span></div>';
     });
-    vertHtml+='<div class="tree-node">'
-      +'<span class="tree-label tree-label-vertical" onclick="toggleTree(\'ptv-'+vi+'\')">'
-      +'<span class="tree-toggle" id="tog-ptv-'+vi+'">&#9654;</span>'
-      +(VERTICAL_ICONS[v.name]||'&#127757;')+' '+v.name+' <span class="tree-pct">'+v.pct+'%</span>'
-      +'</span>'
-      +'<div class="tree-children collapsed" id="ptv-'+vi+'"><div class="tree-children">'+personaHtml+'</div></div>'
-      +'</div>';
+    vertHtml+='<div class="tree-node"><span class="tree-label tree-label-vertical" onclick="toggleTree(\'ptv-'+vi+'\')"><span class="tree-toggle" id="tog-ptv-'+vi+'">&#9654;</span>'+(VERTICAL_ICONS[v.name]||'&#127757;')+' '+v.name+' <span class="tree-pct">'+v.pct+'%</span></span><div class="tree-children collapsed" id="ptv-'+vi+'"><div class="tree-children">'+personaHtml+'</div></div></div>';
   });
-  document.getElementById('treeContent').innerHTML='<div class="tree-root">'
-    +'<span class="tree-label" style="background:'+tagBg[c.tag]+';color:'+tagColor[c.tag]+';border:1px solid '+tagBorder[c.tag]+';font-size:0.88rem;font-weight:800;cursor:default">'
-    +'<span class="tree-toggle"></span>'+c.category+' <span class="tree-count">'+(c.complaint_count||0).toLocaleString()+' mentions</span>'
-    +'</span>'
-    +'<div style="margin:0.5rem 0 0.8rem 0.5rem;font-size:0.72rem;color:#777;font-style:italic;line-height:1.5;max-width:560px">'+c.complaint+'</div>'
-    +'<div class="tree-children"><div class="tree-children">'+vertHtml+'</div></div>'
-    +'</div>';
+  document.getElementById('treeContent').innerHTML='<div class="tree-root"><span class="tree-label" style="background:'+tagBg[c.tag]+';color:'+tagColor[c.tag]+';border:1px solid '+tagBorder[c.tag]+';font-size:0.88rem;font-weight:800;cursor:default"><span class="tree-toggle"></span>'+c.category+' <span class="tree-count">'+(c.complaint_count||0).toLocaleString()+' mentions</span></span><div style="margin:0.5rem 0 0.8rem 0.5rem;font-size:0.72rem;color:#777;font-style:italic;line-height:1.5;max-width:560px">'+c.complaint+'</div><div class="tree-children"><div class="tree-children">'+vertHtml+'</div></div></div>';
 }
 function openTreeDiagram(){
   if(!lastScanData||!lastScanData.complaints||!lastScanData.complaints.length)return;
