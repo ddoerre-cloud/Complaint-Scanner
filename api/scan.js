@@ -1,40 +1,60 @@
 export const config = { maxDuration: 300 };
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured.' });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
   const { prompt } = req.body;
-  if (!prompt) return res.status(400).json({ error: 'Missing prompt' });
+  if (!prompt) {
+    return res.status(400).json({ error: 'Missing prompt' });
+  }
 
   try {
-    const upstream = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-beta': 'web-search-2025-03-05'
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 4000,
-        tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }],
-        system: 'You are a competitive intelligence analyst with web search capability. The user will give you a topic to research. Be concise in your JSON output.',
-        messages: [{ role: 'user', content: prompt }]
+        max_tokens: 8000,
+        system: 'You are a JSON-only competitive intelligence API. You must respond with valid JSON and absolutely nothing else. Never include explanatory text, preambles, apologies, disclaimers, or markdown formatting of any kind. Your entire response must be a single valid JSON object starting with { and ending with }. If you cannot find sufficient data, still return the JSON schema with whatever data you can find.',
+        tools: [
+          {
+            type: 'web_search_20250305',
+            name: 'web_search',
+            max_uses: 5
+          }
+        ],
+        messages: [
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
       })
     });
-    const data = await upstream.json();
-    if (!upstream.ok) return res.status(upstream.status).json(data);
-    const text = data?.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '';
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      return res.status(response.status).json({ error: `API error: ${errorText}` });
+    }
+
+    const data = await response.json();
+
+    // Extract text from all content blocks
+    const text = (data.content || [])
+      .filter(block => block.type === 'text')
+      .map(block => block.text)
+      .join('');
+
     return res.status(200).json({ text });
+
   } catch (err) {
+    console.error('Scan error:', err);
     return res.status(500).json({ error: err.message });
   }
 }
