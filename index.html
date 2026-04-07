@@ -242,7 +242,7 @@
   <button class="btn btn-tree" id="treeBtn" onclick="openTreeDiagram()" disabled>&#128336; Tree Diagram</button>
   <button class="btn btn-share" id="shareBtn" onclick="shareResults()" disabled>&#128279; Share Results</button>
 </div>
-<div class="share-toast" id="shareToast">&#10003; Link copied to clipboard!</div>
+<div class="share-toast" id="shareToast">&#10003; Link copied — much shorter now!</div>
 <div class="status-wrap">
   <div class="status-bar" id="statusBar"><span class="pulse"></span><span id="statusText">Initializing...</span></div>
 </div>
@@ -348,6 +348,7 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
 const TAG_LABELS={pricing:'PRICING',tech:'TECHNICAL',support:'SUPPORT',ux:'UX/UI',hype:'OVERHYPE'};
@@ -497,7 +498,7 @@ function shareResults(){
   if(!lastScanData||!lastScanTopic)return;
   try{
     const payload=JSON.stringify({topic:lastScanTopic,data:lastScanData});
-    const encoded=btoa(unescape(encodeURIComponent(payload)));
+    const encoded=LZString.compressToEncodedURIComponent(payload);
     const url=window.location.origin+window.location.pathname+'#scan='+encoded;
     navigator.clipboard.writeText(url).then(()=>{
       const toast=document.getElementById('shareToast');
@@ -511,7 +512,7 @@ function loadFromHash(){
     const hash=window.location.hash;
     if(!hash||!hash.startsWith('#scan='))return;
     const encoded=hash.slice(6);
-    const payload=JSON.parse(decodeURIComponent(escape(atob(encoded))));
+    const payload=JSON.parse(LZString.decompressFromEncodedURIComponent(encoded));
     if(!payload.topic||!payload.data)return;
     lastScanTopic=payload.topic;
     lastScanData=payload.data;
