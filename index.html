@@ -24,6 +24,7 @@
   .ctrl-group label{display:block;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem}
   .ctrl-group input[type=text]{width:100%;background:#0e0e0e;border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'Inter',sans-serif;font-size:0.82rem;padding:0.55rem 0.8rem;outline:none;transition:border-color 0.15s}
   .ctrl-group input[type=text]:focus{border-color:#555}
+  .ctrl-group input[type=text]::placeholder{color:#444}
   .ctrl-group select{width:100%;background:#0e0e0e;border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'Inter',sans-serif;font-size:0.82rem;padding:0.55rem 0.8rem;outline:none}
   .sites-row{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1rem}
   .site-chip{display:flex;align-items:center;gap:0.35rem;background:#0e0e0e;border:1px solid var(--border);border-radius:999px;padding:0.25rem 0.7rem;font-size:0.7rem;cursor:pointer;user-select:none;transition:all 0.15s;color:var(--muted)}
@@ -38,7 +39,7 @@
   .add-subreddit-btn{background:#0a0a1a;border:1px solid #2a2a6e;color:#9090ff;border-radius:4px;padding:0.3rem 0.75rem;font-family:'Inter',sans-serif;font-size:0.72rem;font-weight:700;cursor:pointer;transition:all 0.15s;white-space:nowrap}
   .add-subreddit-btn:hover{background:#1a1a3e;border-color:#4a4ab0}
   .add-subreddit-hint{font-size:0.65rem;color:#444;flex:1}
-  .btn-row{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:2rem}
+  .btn-row{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem}
   .btn{border:none;padding:0.9rem 2.5rem;font-family:'Inter',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:0.04em;cursor:pointer;border-radius:4px;text-transform:uppercase;transition:all 0.2s}
   .btn-scan{background:linear-gradient(135deg,#ff4500,#ff7034);color:white;box-shadow:0 0 28px rgba(255,69,0,0.22)}
   .btn-scan:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 45px rgba(255,69,0,0.42)}
@@ -51,6 +52,12 @@
   .btn-share{background:linear-gradient(135deg,#1a0a2e,#4a1a8e);color:#cf9fff;box-shadow:0 0 28px rgba(176,96,255,0.15)}
   .btn-share:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 45px rgba(176,96,255,0.35)}
   .btn:disabled{opacity:0.45;cursor:not-allowed}
+  .tips-box{max-width:900px;margin:0 auto 1.8rem;background:#0e1a10;border:1px solid #1a3a20;border-left:3px solid var(--slingr);border-radius:4px;padding:0.85rem 1rem}
+  .tips-label{font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--slingr);margin-bottom:0.55rem}
+  .tips-list{display:flex;flex-direction:column;gap:0.45rem}
+  .tips-item{display:flex;gap:0.6rem;font-size:0.75rem;color:#9ee8de;line-height:1.55}
+  .tips-check{color:var(--slingr);flex-shrink:0;font-size:0.75rem}
+  .tips-item strong{color:#efefef;font-weight:600}
   .share-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#1a0e1a;border:1px solid #b060ff;color:#cf9fff;padding:0.7rem 1.4rem;border-radius:6px;font-size:0.8rem;font-family:'Inter',sans-serif;font-weight:600;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
   .share-toast.visible{opacity:1}
   .tree-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:200;overflow-y:auto;padding:2rem 1rem}
@@ -190,7 +197,7 @@
   <div class="controls-grid">
     <div class="ctrl-group">
       <label>Search topic</label>
-      <input type="text" id="productInput" value="Salesforce" placeholder="e.g. Salesforce, CRM data silos, manual invoicing...">
+      <input type="text" id="productInput" placeholder="e.g. Cisco Meraki, ServiceNow, HubSpot...">
     </div>
     <div class="ctrl-group">
       <label>Number of top results</label>
@@ -243,6 +250,16 @@
   <button class="btn btn-tree" id="treeBtn" onclick="openTreeDiagram()" disabled>&#128336; Tree Diagram</button>
   <button class="btn btn-share" id="shareBtn" onclick="shareResults()" disabled>&#128279; Share Results</button>
 </div>
+
+<div class="tips-box">
+  <div class="tips-label">&#9889; Tips for best results</div>
+  <div class="tips-list">
+    <div class="tips-item"><span class="tips-check">&#10003;</span><span><strong>Search by product name, not category</strong> — use "Cisco Meraki" or "ServiceNow", not "network management" or "telecom software"</span></div>
+    <div class="tips-item"><span class="tips-check">&#10003;</span><span><strong>Deselect channels that don't apply</strong> — click any source chip to toggle it off. For non-Salesforce topics, turn off r/salesforce and r/CRM before scanning</span></div>
+    <div class="tips-item"><span class="tips-check">&#10003;</span><span><strong>Add topic-specific subreddits</strong> — type a name above (with or without r/) and press Enter. Add one at a time. Blue chips can be removed with &#x2715;</span></div>
+  </div>
+</div>
+
 <div class="share-toast" id="shareToast">&#10003; Link copied to clipboard!</div>
 <div class="status-wrap">
   <div class="status-bar" id="statusBar"><span class="pulse"></span><span id="statusText">Initializing...</span></div>
@@ -463,7 +480,8 @@ async function scanProduct(product,topN,timeRange,sites){
   return JSON.parse(m[0]);
 }
 async function startScan(){
-  const product=document.getElementById('productInput').value.trim()||'Salesforce';
+  const product=document.getElementById('productInput').value.trim();
+  if(!product){alert('Please enter a search topic.');return;}
   const compare=document.getElementById('compareInput').value.trim();
   const topN=document.getElementById('topN').value;
   const timeRange=document.getElementById('timeRange').value;
@@ -520,7 +538,7 @@ function loadFromHash(){
     const banner=document.createElement('div');
     banner.style.cssText='max-width:900px;margin:0 auto 1.2rem;background:#1a0e1a;border:1px solid #3a1a3a;border-left:3px solid #b060ff;padding:0.75rem 1.2rem;border-radius:4px;font-size:0.78rem;color:#cf9fff;display:flex;align-items:center;justify-content:space-between;gap:1rem';
     banner.innerHTML='<span>&#128279; <strong>Shared scan results</strong> \u2014 '+escapeHtml(lastScanTopic)+'</span><button onclick="this.parentElement.remove()" style="background:none;border:none;color:#cf9fff;cursor:pointer;font-size:1rem;padding:0">&#x2715;</button>';
-    document.querySelector('.btn-row').insertAdjacentElement('afterend',banner);
+    document.querySelector('.tips-box').insertAdjacentElement('afterend',banner);
     const panelPrimary=document.getElementById('panel-primary');
     renderPanel(panelPrimary,lastScanData.complaints||[],lastScanData.total_mentions,lastScanData.summary,lastScanTopic);
     document.getElementById('tabBar').classList.add('visible');
