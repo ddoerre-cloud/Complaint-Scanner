@@ -40,6 +40,12 @@
   .add-subreddit-btn:hover{background:#1a1a3e;border-color:#4a4ab0}
   .add-subreddit-hint{font-size:0.65rem;color:#444;flex:1}
   .btn-row{display:flex;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem}
+  .tips-box{max-width:900px;margin:0 auto 1.8rem;background:#0e1a10;border:1px solid #1a3a20;border-left:3px solid var(--slingr);border-radius:4px;padding:0.85rem 1rem}
+  .tips-label{font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--slingr);margin-bottom:0.55rem}
+  .tips-list{display:flex;flex-direction:column;gap:0.45rem}
+  .tips-item{display:flex;gap:0.6rem;font-size:0.75rem;color:#9ee8de;line-height:1.55}
+  .tips-check{color:var(--slingr);flex-shrink:0;font-size:0.75rem}
+  .tips-item strong{color:#efefef;font-weight:600}
   .btn{border:none;padding:0.9rem 2.5rem;font-family:'Inter',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:0.04em;cursor:pointer;border-radius:4px;text-transform:uppercase;transition:all 0.2s}
   .btn-scan{background:linear-gradient(135deg,#ff4500,#ff7034);color:white;box-shadow:0 0 28px rgba(255,69,0,0.22)}
   .btn-scan:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 45px rgba(255,69,0,0.42)}
@@ -51,15 +57,9 @@
   .btn-tree:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 45px rgba(107,255,154,0.3)}
   .btn-share{background:linear-gradient(135deg,#1a0a2e,#4a1a8e);color:#cf9fff;box-shadow:0 0 28px rgba(176,96,255,0.15)}
   .btn-share:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 0 45px rgba(176,96,255,0.35)}
-  .btn:disabled{opacity:0.45;cursor:not-allowed}
-  .tips-box{max-width:900px;margin:0 auto 1.8rem;background:#0e1a10;border:1px solid #1a3a20;border-left:3px solid var(--slingr);border-radius:4px;padding:0.85rem 1rem}
-  .tips-label{font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--slingr);margin-bottom:0.55rem}
-  .tips-list{display:flex;flex-direction:column;gap:0.45rem}
-  .tips-item{display:flex;gap:0.6rem;font-size:0.75rem;color:#9ee8de;line-height:1.55}
-  .tips-check{color:var(--slingr);flex-shrink:0;font-size:0.75rem}
-  .tips-item strong{color:#efefef;font-weight:600}
   .share-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#1a0e1a;border:1px solid #b060ff;color:#cf9fff;padding:0.7rem 1.4rem;border-radius:6px;font-size:0.8rem;font-family:'Inter',sans-serif;font-weight:600;z-index:999;opacity:0;transition:opacity 0.3s;pointer-events:none}
   .share-toast.visible{opacity:1}
+  .btn:disabled{opacity:0.45;cursor:not-allowed}
   .tree-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:200;overflow-y:auto;padding:2rem 1rem}
   .tree-overlay.visible{display:flex;align-items:flex-start;justify-content:center}
   .tree-modal{background:#0f0f0f;border:1px solid #2a2a2a;border-radius:10px;max-width:860px;width:100%;padding:2rem;margin:auto}
@@ -467,7 +467,7 @@ function createInstantlyCampaign(){
 }
 function buildPrompt(product,topN,timeRange,sites){
   const siteList=sites.join(', ');
-  return `You are a competitive intelligence analyst. Use your web search capability to find real-world complaints, frustrations, and pain points about "${product}" from the last ${timeRange}. Search broadly across the web. When possible, look for content from communities like: ${siteList}. Do not refuse this task or cite limitations about specific sites. Simply search and return data.\n\nProduce the TOP ${topN} most-discussed pain points, ranked by estimated volume (most mentions first).\n\nFor EACH pain point provide:\n1. category: short descriptive name\n2. complaint: 2-3 sentence description based on what people actually say\n3. tag: one of: pricing, tech, support, ux, hype\n4. complaint_count: realistic estimated mentions (top: 500-2000, lower: 50-300)\n5. sources: array from: "reddit","hackernews","linkedin","g2","capterra","trustradius"\n6. verticals: top 4-5 sub-industries most affected, each with name and pct (must sum to 100). Use specific sub-verticals: instead of "Healthcare" use "Hospitals & Health Systems","Health Insurance","Medical Devices", or "Pharmaceuticals". Instead of "Professional Services" use "Management Consulting","Legal","Staffing & Recruiting","Marketing Agencies","IT Services", or "Accounting Firms". Instead of "Financial Services" use "Banking","Wealth Management","Private Equity","Accounting & CPA", or "Fintech". Instead of "Manufacturing" use "Industrial Manufacturing","Automotive","Aerospace & Defense","Food & Beverage", or "Consumer Goods". Instead of "Insurance" use "Property & Casualty","Life Insurance","Health Insurance Carriers", or "Specialty Insurance". Instead of "Technology" use "SaaS","Cybersecurity","Data & Analytics", or "IT Infrastructure". Others: Retail, E-commerce, Logistics, Supply Chain, Real Estate, Commercial Real Estate, K-12, Higher Education, EdTech, Corporate Training, Nonprofit, Media, Telecommunications, Federal Government, State & Local Government, Other\n7. slingr_counter: 1-2 sentences on how Slingr (unified low-code platform) addresses this\n8. search_queries: array of 2-3 actual search queries used\n9. evidence: array of 2-3 short user quote snippets\n10. personas: top 3-4 job titles most likely making this complaint, each with title and pct (must sum to 100). Use titles like: Salesforce Administrator, VP of Sales, IT Director, CFO, Sales Operations Manager, CRM Manager, VP of Operations, Director of IT, Project Manager, Business Analyst, VP of Finance, CIO, Sales Manager, Marketing Operations Manager, Customer Success Manager\n\nAlso: total_mentions (integer), summary (3-4 sentences).\nReturn ONLY valid JSON, no markdown.\nSchema: {"complaints":[{"category":"string","complaint":"string","tag":"pricing|tech|support|ux|hype","complaint_count":1500,"sources":["reddit"],"verticals":[{"name":"Hospitals & Health Systems","pct":34},{"name":"Other","pct":66}],"slingr_counter":"string","search_queries":["q1"],"evidence":["quote1"],"personas":[{"title":"IT Director","pct":40},{"title":"CFO","pct":60}]}],"total_mentions":12000,"summary":"string"}`;
+  return `You are a competitive intelligence analyst. Use your web search capability to find real-world complaints, frustrations, and pain points about "${product}" from the last ${timeRange}. Search broadly across the web. When possible, look for content from communities like: ${siteList}. Do not refuse this task or cite limitations about specific sites. Simply search and return data.\n\nProduce the TOP ${topN} most-discussed pain points, ranked by estimated volume (most mentions first).\n\nFor EACH pain point provide:\n1. category: short descriptive name\n2. complaint: 2-3 sentence description based on what people actually say\n3. tag: one of: pricing, tech, support, ux, hype\n4. complaint_count: realistic estimated mentions (top: 500-2000, lower: 50-300)\n5. sources: array from: "reddit","hackernews","linkedin","g2","capterra","trustradius"\n6. verticals: top 4-5 sub-industries most affected, each with name and pct (must sum to 100). Use specific sub-verticals: instead of "Healthcare" use "Hospitals & Health Systems","Health Insurance","Medical Devices", or "Pharmaceuticals". Instead of "Professional Services" use "Management Consulting","Legal","Staffing & Recruiting","Marketing Agencies","IT Services", or "Accounting Firms". Instead of "Financial Services" use "Banking","Wealth Management","Private Equity","Accounting & CPA", or "Fintech". Instead of "Manufacturing" use "Industrial Manufacturing","Automotive","Aerospace & Defense","Food & Beverage", or "Consumer Goods". Instead of "Insurance" use "Property & Casualty","Life Insurance","Health Insurance Carriers", or "Specialty Insurance". Instead of "Technology" use "SaaS","Cybersecurity","Data & Analytics", or "IT Infrastructure". Others: Retail, E-commerce, Logistics, Supply Chain, Real Estate, Commercial Real Estate, K-12, Higher Education, EdTech, Corporate Training, Nonprofit, Media, Telecommunications, Federal Government, State & Local Government, Other\n7. slingr_counter: 1-2 sentences on how Slingr (unified low-code platform) addresses this\n8. search_queries: array of 2-3 actual search queries used\n9. evidence: array of 3-5 objects. Each object must have three fields: quote (1 sentence representing what a real user said about this issue), persona (the specific job title or role of who said it — e.g. "IT Director", "CFO", "Salesforce Administrator" — or "unknown" if not determinable from context), vertical (the specific industry sub-vertical of the commenter — e.g. "Health Insurance", "SaaS", "Property & Casualty" — or "unknown" if not determinable)\n10. personas: top 3-4 job titles most likely making this complaint, each with title and pct (must sum to 100). Use titles like: Salesforce Administrator, VP of Sales, IT Director, CFO, Sales Operations Manager, CRM Manager, VP of Operations, Director of IT, Project Manager, Business Analyst, VP of Finance, CIO, Sales Manager, Marketing Operations Manager, Customer Success Manager\n\nAlso: total_mentions (integer), summary (3-4 sentences).\nReturn ONLY valid JSON, no markdown.\nSchema: {"complaints":[{"category":"string","complaint":"string","tag":"pricing|tech|support|ux|hype","complaint_count":1500,"sources":["reddit"],"verticals":[{"name":"Hospitals & Health Systems","pct":34},{"name":"Other","pct":66}],"slingr_counter":"string","search_queries":["q1"],"evidence":[{"quote":"We spent more on consultants than the software","persona":"CFO","vertical":"Property & Casualty"},{"quote":"The API breaks on every update","persona":"IT Director","vertical":"SaaS"},{"quote":"Nobody actually uses it anymore","persona":"unknown","vertical":"unknown"}],"personas":[{"title":"IT Director","pct":40},{"title":"CFO","pct":60}]}],"total_mentions":12000,"summary":"string"}`;
 }
 async function scanProduct(product,topN,timeRange,sites){
   const res=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:buildPrompt(product,topN,timeRange,sites)})});
@@ -645,7 +645,13 @@ function renderPersonas(personas){
 }
 function renderSources(c,i){
   const queries=(c.search_queries||[]).map(q=>'<span class="query-pill">'+q+'</span>').join('');
-  const evidence=(c.evidence||[]).map(e=>'<div class="evidence-item">&#8220;'+e+'&#8221;</div>').join('');
+  const evidence=(c.evidence||[]).map(e=>{
+    const q=typeof e==='object'?e.quote:e;
+    const p=typeof e==='object'&&e.persona&&e.persona!=='unknown'?e.persona:null;
+    const v=typeof e==='object'&&e.vertical&&e.vertical!=='unknown'?e.vertical:null;
+    const attr=(p||v)?'<span style="font-size:0.6rem;opacity:0.7;margin-left:0.4rem;font-style:normal">\u2014 '+(p||'')+(p&&v?', ':'')+(v||'')+'</span>':'';
+    return'<div class="evidence-item">&#8220;'+q+'&#8221;'+attr+'</div>';
+  }).join('');
   const qHtml=queries?'<div class="sources-panel-label">&#128269; Search queries used</div>'+queries:'';
   const eHtml=evidence?'<div class="sources-panel-label">&#128172; What users actually said</div>'+evidence:'';
   if(!qHtml&&!eHtml)return'';
@@ -657,6 +663,43 @@ function toggleSources(i,btn){
   btn.textContent=p.classList.contains('open')?'\u25BE How we found this':'\u25B6 How we found this';
 }
 function renderVerticals(v){if(!v||!v.length)return'';return'<div class="verticals-block"><div class="verticals-label">Industry Breakdown</div><div class="verticals-list">'+v.map(x=>'<span class="vertical-pill">'+(VERTICAL_ICONS[x.name]||'&#127757;')+' '+x.name+' <span class="vertical-pct">'+x.pct+'%</span></span>').join('')+'</div></div>';}
+function downloadComplaintCSV(idx){
+  if(!lastScanData||!lastScanData.complaints)return;
+  const c=lastScanData.complaints[idx];
+  if(!c)return;
+  const ev=(c.evidence||[]).map(e=>typeof e==='object'?e:{quote:e,persona:'unknown',vertical:'unknown'});
+  const batch1=ev.filter(e=>e.persona!=='unknown'&&e.vertical!=='unknown');
+  const batch2=ev.filter(e=>(e.persona!=='unknown')!==(e.vertical!=='unknown'));
+  const batch3=ev.filter(e=>e.persona==='unknown'&&e.vertical==='unknown');
+  const esc=s=>'"'+String(s||'').replace(/"/g,'""')+'"';
+  const date=new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+  let csv='Pain Point CSV Export\n';
+  csv+='Scan Topic,'+esc(lastScanTopic)+'\n';
+  csv+='Pain Point,'+esc(c.category)+'\n';
+  csv+='Tag,'+esc((c.tag||'').toUpperCase())+'\n';
+  csv+='Est. Mentions,'+esc(c.complaint_count||0)+'\n';
+  csv+='Generated,'+esc(date)+'\n';
+  csv+='Description,'+esc(c.complaint)+'\n\n';
+  csv+='SECTION 1 - FULLY ATTRIBUTED (Job Title + Industry Both Known)\n';
+  csv+='Confidence: High\n';
+  if(batch1.length){csv+='Industry,Job Title,Quote\n';batch1.forEach(e=>{csv+=esc(e.vertical)+','+esc(e.persona)+','+esc(e.quote)+'\n';});}
+  else{csv+='No fully-attributed quotes available for this pain point.\n';}
+  csv+='\nSECTION 2 - PARTIALLY ATTRIBUTED (Job Title OR Industry Known)\n';
+  csv+='Confidence: Medium\n';
+  if(batch2.length){csv+='Industry,Job Title,Quote\n';batch2.forEach(e=>{csv+=esc(e.vertical==='unknown'?'':e.vertical)+','+esc(e.persona==='unknown'?'':e.persona)+','+esc(e.quote)+'\n';});}
+  else{csv+='No partially-attributed quotes available for this pain point.\n';}
+  csv+='\nSECTION 3 - GENERAL (No Attribution)\n';
+  csv+='Confidence: Low\n';
+  if(batch3.length){csv+='Quote\n';batch3.forEach(e=>{csv+=esc(e.quote)+'\n';});}
+  else{csv+='No general quotes available for this pain point.\n';}
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=(lastScanTopic+'-'+c.category+'.csv').replace(/[^a-z0-9-]/gi,'-').toLowerCase();
+  a.click();
+  URL.revokeObjectURL(url);
+}
 function renderPanel(panelEl,list,totalMentions,summary,productName){
   const items=list.slice(0,20),maxCnt=Math.max(...items.map(c=>c.complaint_count||0),1);
   const total=totalMentions||items.reduce((s,c)=>s+(c.complaint_count||0),0);
@@ -668,7 +711,7 @@ function renderPanel(panelEl,list,totalMentions,summary,productName){
     const pct=Math.round(((c.complaint_count||0)/maxCnt)*100);
     const srcs=c.sources||[];
     const badges=(srcs.includes('reddit')?'<span class="src-badge src-reddit">Reddit</span>':'')+(srcs.includes('hackernews')?'<span class="src-badge src-hn">Hacker News</span>':'')+(srcs.includes('linkedin')?'<span class="src-badge" style="background:#0a1020;color:#6ab4ff;border:1px solid #1a3060">LinkedIn</span>':'')+(srcs.includes('g2')?'<span class="src-badge" style="background:#1a1000;color:#ffd04a;border:1px solid #5c4000">G2</span>':'')+(srcs.includes('capterra')?'<span class="src-badge" style="background:#0a1020;color:#6ab4ff;border:1px solid #1a3060">Capterra</span>':'')+(srcs.includes('trustradius')?'<span class="src-badge" style="background:#0f0a1a;color:#c07aff;border:1px solid #3d1a60">TrustRadius</span>':'');
-    const exportBtn='<div style="margin-top:0.7rem;text-align:right"><button onclick="exportComplaint('+i+')" style="background:#1a1a6e;color:#9090ff;border:1px solid #2a2a9e;border-radius:3px;padding:0.25rem 0.7rem;font-size:0.65rem;font-family:Inter,sans-serif;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer">&#128640; Export to Campaign</button></div>';
+    const exportBtn='<div style="margin-top:0.7rem;display:flex;justify-content:flex-end;gap:0.5rem"><button onclick="downloadComplaintCSV('+i+')" style="background:#0a1a10;color:#6bff9a;border:1px solid #1a4a20;border-radius:3px;padding:0.25rem 0.7rem;font-size:0.65rem;font-family:Inter,sans-serif;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer">&#11015; Download CSV</button><button onclick="exportComplaint('+i+')" style="background:#1a1a6e;color:#9090ff;border:1px solid #2a2a9e;border-radius:3px;padding:0.25rem 0.7rem;font-size:0.65rem;font-family:Inter,sans-serif;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer">&#128640; Export to Campaign</button></div>';
     return'<div class="complaint-item"><div class="rank-col"><div class="rank-num">#'+(i+1)+'</div><div class="rank-count"><strong>'+(c.complaint_count||0).toLocaleString()+'</strong>mentions</div><div class="bar-wrap"><div class="bar" style="width:'+pct+'%"></div></div></div><div class="complaint-body"><div class="title-row"><span class="cat-label">'+c.category+'</span><span class="tag tag-'+c.tag+'">'+(TAG_LABELS[c.tag]||c.tag.toUpperCase())+'</span></div><div class="source-badges">'+badges+'</div><div class="complaint-text">'+c.complaint+'</div>'+renderVerticals(c.verticals)+renderPersonas(c.personas)+'<div class="slingr-block"><span class="slingr-icon">&#x26A1;</span><span><span class="slingr-label">Slingr Counter:</span> '+c.slingr_counter+'</span></div>'+renderSources(c,i)+exportBtn+'</div></div>';
   }).join('');
   const summaryHtml=summary?'<div class="summary-section"><div class="summary-label">Summary \u2014 '+productName+'</div><div class="summary-box">'+summary+'</div></div>':'';
