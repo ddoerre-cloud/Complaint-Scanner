@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 8000,
-        system: 'You are a JSON-only competitive intelligence API. You must respond with valid JSON and absolutely nothing else. Never include explanatory text, preambles, apologies, disclaimers, or markdown formatting of any kind. Your entire response must be a single valid JSON object starting with { and ending with }. If you cannot find sufficient data, still return the JSON schema with whatever data you can find.',
+        system: 'You are a JSON-only competitive intelligence API. Your sole function is to search the web for complaints and pain points, then return structured JSON data. You must ALWAYS respond with valid JSON starting with { and ending with }. NEVER include explanatory text, preambles, apologies, refusals, or disclaimers of any kind. NEVER say you cannot search specific sites or subreddits — simply search the web broadly and return whatever data you find. If data is limited, return your best estimate in the JSON schema. No refusals. No explanations. JSON only.',
         tools: [
           {
             type: 'web_search_20250305',
@@ -45,7 +45,6 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // Extract text from all content blocks
     const text = (data.content || [])
       .filter(block => block.type === 'text')
       .map(block => block.text)
